@@ -29,11 +29,11 @@ print(user.id) # display the id
 # linked annotation:
 project = Project(name="my website", owner=user)
 project.save()
-# because Project.owner is tagged as "Linked", 
+# because Project.owner is tagged as "Linked",
 # the project.owner field is converted in database to store the "ID"
-# If the field had not been tagged as "Linked", then the object of 
+# If the field had not been tagged as "Linked", then the object of
 # type "User" would have been written entirely in the "owner" f
-# field (as a document). 
+# field (as a document).
 
 #### GET objects from DB
 
@@ -62,9 +62,7 @@ The complete documentation is in progress.
 # What's next
 
 - [ ] More checks on attributes to avoid multiple Model in attributes
-
 - [ ] Take decision to save model in composite object (nested objects)
-
 - [ ] Give possibility to propose "index" annotation
-
 - [ ] Enhance filter method
+- [ ] Cascade deletion (top/down)
