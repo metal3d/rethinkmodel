@@ -46,10 +46,25 @@ dbproj = Project.get(project.id)
 # now, dbproj.owner is a User object, even if in db it's an ID
 ```
 
-There are others methods like:
+# Common methods
 
-- `get(id)` (static method) returns the object identified by the given id
-- `filter(select)` (static method) returns a list of found data matching the "`select`" dict
-- `tablename` (static property) returns the created or overridden table name
-- `todict()`(method) returns the constructed dict representation
-- `delete(id=None)` (static method) delete an entry - if called from class, the id must be given, if called from object, the id is taken from the current object itself (**there is no cascading deletion at this time**)
+| Method          | Access          | Description                                                                                           |
+| --------------- | --------------- | ----------------------------------------------------------------------------------------------------- |
+| `get(id)`       | static method   | returns the object taken from database for the given ID, None if not found                            |
+| `filter(id)`    | static method   | returns a list of found objects matching the `dict` selection                                         |
+| `tablename`     | static property | produce the table name, can be override with `__tablename__` static property in your model definition |
+| `todict()`      | method          | returns the `dict` representation, the format corresponds to what will be set in RethinkDB database   |
+| `delete()`      | method          | delete the current object from database                                                               |
+| `delete_id(id)` | static method   | method to call from you Model type to delete an object in database that is identified by the given id |
+
+The complete documentation is in progress.
+
+# What's next
+
+- [ ] More checks on attributes to avoid multiple Model in attributes
+
+- [ ] Take decision to save model in composite object (nested objects)
+
+- [ ] Give possibility to propose "index" annotation
+
+- [ ] Enhance filter method
