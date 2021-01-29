@@ -1,8 +1,9 @@
 """ Model definition """
 from datetime import datetime
 
+from . import db
 from .checkers import Checker
-from .db import SOFT_DELETE, connect
+from .db import connect
 from .exceptions import BadType, UnknownField
 from .transforms import Linked, Transform
 
@@ -190,6 +191,13 @@ class Model:
     def get(cls, uid: str) -> object:
         """ Return the correct model object """
 
+        if db.SOFT_DELETE:
+            # filter method alreadu manage soft_delete attribute, use it:
+            result = cls.filter({"id": uid})
+            if result and len(result) > 0:
+                return result[0]
+            return None
+
         rdb, conn = connect()
         result = rdb.table(cls.tablename).get(uid).run(conn)
         conn.close()
@@ -209,7 +217,7 @@ class Model:
         assert idx is not None
 
         rdb, conn = connect()
-        if SOFT_DELETE:
+        if db.SOFT_DELETE:
             rdb.table(cls.tablename).get(idx).update(
                 {"deleted_at": datetime.astimezone(datetime.now())}
             ).run(conn)
@@ -261,6 +269,9 @@ class Model:
     def filter(cls, select: dict = None) -> dict:
         """ Select object in database with filters """
 
+        # force not deleted object
+        if db.SOFT_DELETE:
+            select["deleted_at"] = None
         rdb, conn = connect()
         results = rdb.table(cls.tablename).filter(select).run(conn)
         conn.close()
