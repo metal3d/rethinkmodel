@@ -1,3 +1,4 @@
+.PHONY:doc
 TEST_FILTER=""
 
 test:
@@ -9,3 +10,6 @@ build: clean
 
 clean:
 	rm -rf cover .coverage build dist *.egg-info
+
+doc:
+	cd doc && pipenv run make html
