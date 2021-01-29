@@ -48,11 +48,13 @@ dbproj = Project.get(project.id)
 
 # Common methods
 
+The full documentation is more complete, but below are the most used methods
+
 | Method          | Access          | Description                                                                                           |
 | --------------- | --------------- | ----------------------------------------------------------------------------------------------------- |
+| `tablename`     | static property | produce the table name, can be override with `__tablename__` static property in your model definition |
 | `get(id)`       | static method   | returns the object taken from database for the given ID, None if not found                            |
 | `filter(id)`    | static method   | returns a list of found objects matching the `dict` selection                                         |
-| `tablename`     | static property | produce the table name, can be override with `__tablename__` static property in your model definition |
 | `todict()`      | method          | returns the `dict` representation, the format corresponds to what will be set in RethinkDB database   |
 | `delete()`      | method          | delete the current object from database                                                               |
 | `delete_id(id)` | static method   | method to call from you Model type to delete an object in database that is identified by the given id |
