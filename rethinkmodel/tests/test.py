@@ -4,7 +4,7 @@ import sys
 from datetime import datetime
 from unittest import TestCase
 
-# try/except because some IDE complains of import
+# try/except because some IDE complains about bad imports
 try:
     from rethinkdb import errors
     from rethinkmodel import Model, config, manage
@@ -27,7 +27,7 @@ class User(Model):
     username: str
 
 
-class User2(Model):
+class StrongerUser(Model):
     """ A user wih Unique field on username """
 
     __tablename__ = "users2"
@@ -39,17 +39,23 @@ class Project(Model):
     user: (User, Linked)
 
 
-class Project2(Model):
+class ProjectNoLinked(Model):
+    """ A project with no Link """
+
     __tablename__ = "projects2"
     name: str
     user: User
 
 
 class WithNotNone(Model):
+    """ A simple objet with non null attribute """
+
     username: (str, NonNull)
 
 
 class Product(Model):
+    """ A simple product with name and price """
+
     name: str
     price: float
 
@@ -143,10 +149,10 @@ class DatabaseTests(TestCase):
 
     def test_unicity(self):
         """ Check if Unique annotation works """
-        user = User2(username="foo")
+        user = StrongerUser(username="foo")
         user.save()
 
-        user2 = User2(username="foo")
+        user2 = StrongerUser(username="foo")
         with self.assertRaises(UniqueException):
             user2.save()
 
@@ -174,10 +180,10 @@ class DatabaseTests(TestCase):
         user.save()
 
         # Project2 must write the full user (not Linked annotation)
-        proj2 = Project2(name="project2 project with not linked user", user=user)
+        proj2 = ProjectNoLinked(name="project2 project with not linked user", user=user)
         proj2.save()
 
-        res = rdb.db(DB_NAME).table(Project2.tablename).get(proj2.id).run(conn)
+        res = rdb.db(DB_NAME).table(ProjectNoLinked.tablename).get(proj2.id).run(conn)
         self.assertIsInstance(res["user"], dict)
         self.assertEqual(res["user"]["username"], user.username)
 
@@ -240,8 +246,14 @@ class DatabaseTests(TestCase):
         except Exception as error:  # pylint: disable=broad-except
             self.fail(str(error))
 
-        # get the bill
+        # ensire that database cnotains a full object, and not
+        # links
+        res = rdb.table(Bill.tablename).get(bill.id).run(conn)
+        for idx, prod in enumerate(res.get("products", [])):
+            self.assertIsInstance(prod, dict)
+            self.assertEqual(prod["name"], products[idx].name)
 
+        # get the bill
         fetch = Bill.get(bill.id)  # bill.get is not a joke :)
 
         self.assertIsInstance(fetch.products, list)
