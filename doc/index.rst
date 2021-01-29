@@ -52,6 +52,7 @@ In the above example:
    :maxdepth: 2
    :caption: Contents:
 
+   modules/manage
    modules/init
    modules/model
    modules/checkers

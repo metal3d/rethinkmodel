@@ -1,13 +1,27 @@
 """ Automatic database initialisation tool 
 
 This module proposes some functions to automatically create database and
-tables by introspecting modules.
+tables by introspecting modules. It can be used in Python, or from command line (in progress).
 
-This can be also called by command line:
+The way to go is th create a python script, named "manage.py" for example, that will do
+the job. For example:
 
-    python -m rethinkdb.manage <path>
+.. code-block::
 
-With <path> is the directory to parse. You may give the path of your project.
+    import rethinkmodel
+    import manage from rethinkmodel.manage
+
+    import myproject.dataModule # this is your module
+
+    # you should configure your RethinkDB connection here
+    rethinkmodel.config(...)
+
+    # this will introspect module to find
+    # each "Model" object and create tables.
+    # It will also create database
+    manage(myproject.dataModule)
+
+
 
 """
 import glob
@@ -45,8 +59,8 @@ def check_db():
     conn.close()
 
 
-def auto(member):
-    """ automatic database and table creation """
+def auto(member: type):
+    """ automatic database and table creation for the given type (Model child)"""
 
     if not issubclass(member, Model) or member is Model:
         return
@@ -70,9 +84,10 @@ def auto(member):
     conn.close()
 
 
-def manage(mod):
+def manage(mod: (type, str)):
     """Get all classes from given module and
-    call "auto()" function to create table"""
+    call "auto()" function to create table. This function accept
+    a module, or the module name as string."""
     if isinstance(mod, str):
         mod = __import__(mod)
     members = inspect.getmembers(mod)
@@ -81,8 +96,8 @@ def manage(mod):
             auto(obj)
 
 
-def introspect(modpath):
-    """ Introspect module by a given path """
+def introspect(modpath: str):
+    """ Introspect module inside a given path """
     name = os.path.basename(modpath)
     name = name.replace(".py", "")
 
