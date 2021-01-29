@@ -1,22 +1,24 @@
 """ Test basic usage of rethinkmodel """
 # pylint: disable=too-few-public-methods,missing-class-docstring
 import sys
+from datetime import datetime
 from unittest import TestCase
 
 # try/except because some IDE complains of import
 try:
-    import rethinkmodel
     from rethinkdb import errors
-    from rethinkmodel import (BadType, Linked, Model, NonNull, Unique, connect,
-                              manage)
+    from rethinkmodel import Model, config, manage
+    from rethinkmodel.checkers import NonNull, Unique
+    from rethinkmodel.db import connect
     from rethinkmodel.exceptions import (BadType, NonNullException,
                                          UniqueException, UnknownField)
+    from rethinkmodel.transforms import Linked
 except ImportError as imp:
     print(imp)
     sys.exit(1)
 
 DB_NAME = "test3"
-rethinkmodel.config(dbname=DB_NAME)
+config(dbname=DB_NAME)
 
 
 class User(Model):
@@ -59,6 +61,13 @@ class Bill(Model):
     client: User
 
 
+class LinkedBill(Model):
+    """ Same as Bill but with linked objects """
+
+    products: (list, Product, Linked)
+    client: User
+
+
 # initialte database
 rdb, conn = connect()
 try:
@@ -78,6 +87,28 @@ class DatabaseTests(TestCase):
         """ Test create object with bad type """
         with self.assertRaises(BadType):
             _ = User(username=42)
+
+    def test_dates(self):
+        """ Test date injection """
+        user = User(username="the date user")
+        user.save()
+        now = datetime.now()
+
+        # create
+        self.assertIsInstance(user.created_at, datetime)
+        self.assertIsNone(user.updated_at)
+        self.assertIsNone(user.deleted_at)
+        self.assertEqual(user.created_at.day, now.day)
+        # update
+        user.save()
+        self.assertIsInstance(user.created_at, datetime)
+        self.assertIsInstance(user.updated_at, datetime)
+        self.assertIsNone(user.deleted_at)
+
+        # whith get
+        fetch = User.get(user.id)
+        self.assertIsInstance(fetch.created_at, datetime)
+        self.assertEqual(fetch.created_at.day, now.day)
 
     def test_not_declared_field(self):
         """ Test create an object with not declared field """
@@ -193,17 +224,6 @@ class DatabaseTests(TestCase):
         fetch = User.get(user2.id)
         self.assertIsNone(fetch)
 
-    def test_with_list(self):
-        """ Try to build objects with list """
-
-        user = User(username="simple list checker")
-        products = [
-            Product(name="simpe 1", price=99.0),
-            Product(name="simpe 2", price=42.0),
-        ]
-
-        bill = Bill(client=user, products=products)
-
     def test_list_save_get(self):
         """ Try to save an object with list """
 
@@ -228,3 +248,26 @@ class DatabaseTests(TestCase):
         self.assertEqual(len(fetch.products), 2)
         for prod in fetch.products:
             self.assertIsInstance(prod, Product)
+
+    def test_linked_list(self):
+        """ Try to save object with Linked list """
+        user = User(username="linked bill user")
+        products = [
+            Product(name="linked prod 1", price=42.0),
+            Product(name="linked prod 2", price=9.99),
+        ]
+        for product in products:
+            product.save()
+
+        bill = LinkedBill(products=products, client=user)
+        bill.save()
+        # be sure that in database, the list is a "ID" list
+        linked = rdb.table(LinkedBill.tablename).get(bill.id).run(conn)
+
+        for idx, product in enumerate(products):
+            self.assertEqual(linked["products"][idx], product.id)
+
+        # check if objects are reconstructed
+        fetch = LinkedBill.get(bill.id)
+        for idx, product in enumerate(products):
+            self.assertEqual(fetch.products[idx].id, product.id)

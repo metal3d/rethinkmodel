@@ -20,4 +20,10 @@ class Linked(Transform):
     def transform(cls, model, field):
         """ Set the field to the linked object id """
         element = getattr(model, field)
+
+        # it coud be a list
+        if isinstance(element, list):
+            return [e.id for e in element]
+
+        # default is to return the element id
         return getattr(element, "id")

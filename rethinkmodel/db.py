@@ -10,6 +10,7 @@ USER = os.environ.get("RDB_USER", "admin")
 PASSWORD = os.environ.get("RDB_PASSWORD", "")
 TIMEOUT = int(os.environ.get("RDB_TIMEOUT", 20))
 SSL = None
+SOFT_DELETE = False
 
 
 def connect():
