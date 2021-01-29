@@ -1,0 +1,7 @@
+cover
+cover/*
+.coverage
+**/*.pyc
+doc/_build/*
+doc/_static/*
+doc/_templates/*
