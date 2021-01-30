@@ -1,4 +1,4 @@
-""" Automatic database initialisation tool 
+""" Automatic database initialisation tool
 
 This module proposes some functions to automatically create database and
 tables by introspecting modules. It can be used in Python, or from command line (in progress).
