@@ -1,7 +1,7 @@
 """ Model definition """
 from datetime import datetime
 
-from . import db
+from . import actions, db
 from .checkers import Checker
 from .db import connect
 from .exceptions import BadType, UnknownField
@@ -168,14 +168,26 @@ class Model:
         # check if all attributes are ok
         self.__process_checkers()
 
-        rdb, conn = self.__r, self.__conn
+        # prepare date and action type
         if self.id is None:
             self.created_at = datetime.astimezone(datetime.now())
+            action_type = actions.ACTION_CREATE
         else:
             self.updated_at = datetime.astimezone(datetime.now())
+            action_type = actions.ACTION_UPDATE
+
+        # Find action annotaions
+        todo = {}
+        for field, kinds in self._annotations().items():
+            actionlist = [kind for kind in kinds if issubclass(kind, actions.Action)]
+            todo[field] = actionlist
+        for field, act in todo.items():
+            for action in act:
+                action.do_action(self, field, action_type)
 
         data = self.todict()
 
+        rdb, conn = self.__r, self.__conn
         if self.id is not None:
             # update if the object has got an id
             del data["id"]
@@ -212,12 +224,19 @@ class Model:
 
     def delete(self):
         """ Delete this object from DB """
-        self.delete_id(self.id)
+        self.delete_id(self.id, model=self)
 
     @classmethod
-    def delete_id(cls, idx):
+    def delete_id(cls, idx, model=None):
         """ Delete the object that is identified by "id" """
         assert idx is not None
+
+        for field, annotations in cls._annotations().items():
+            for annotation in annotations:
+                if issubclass(annotation, actions.Action):
+                    if model is None:
+                        model = cls.get(idx)
+                    annotation.do_action(model, field, actions.ACTION_DELETE)
 
         rdb, conn = connect()
         if db.SOFT_DELETE:
