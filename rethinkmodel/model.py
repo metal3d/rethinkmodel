@@ -119,7 +119,7 @@ class Model:
                     kind.check(self, name)
         return True
 
-    def todict(self) -> dict:
+    def todict(self, is_nested=False) -> dict:
         """ Return dict that can be written in db """
 
         annotations = self._annotations()
@@ -136,14 +136,14 @@ class Model:
                 objects = []
                 for attr in attribute:
                     if hasattr(attr, "todict"):
-                        objects.append(attr.todict())
+                        objects.append(attr.todict(is_nested=True))
                     else:
                         objects.append(attr)
                 data[name] = objects
 
             # or to be a Model
             elif hasattr(attribute, "todict"):
-                data[name] = attribute.todict()
+                data[name] = attribute.todict(is_nested=True)
 
             # find Transfrom annotations and apply them
             transformations = [
@@ -157,6 +157,9 @@ class Model:
         # set the id if it exists
         if self.id:
             data["id"] = self.id
+        if is_nested:
+            for attr in ("created", "updated", "deleted"):
+                del data[attr + "_at"]
         return data
 
     def save(self) -> object:
