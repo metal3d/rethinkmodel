@@ -8,9 +8,14 @@ test:
 build: clean
 	pipenv run python -m pep517.build .
 
-clean:
-	rm -rf cover .coverage build dist *.egg-info
-	cd doc && pipenv run make clean
+
+clean-all: clean-doc
 
 doc:
 	cd doc && pipenv run make html
+
+clean-doc:
+	cd doc && pipenv run make clean
+
+clean:
+	rm -rf cover .coverage build dist *.egg-info
