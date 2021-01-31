@@ -16,6 +16,9 @@ the job. For example:
     # you should configure your RethinkDB connection here
     rethinkmodel.config(...)
 
+    # Check if the configured database exists
+    manage.check_db()
+
     # this will introspect module to find
     # each "Model" object and create tables.
     # It will also create database

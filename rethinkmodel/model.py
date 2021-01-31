@@ -1,10 +1,57 @@
-""" Model definition """
+""" Model definition 
+
+Each data object **must** inherit from :code:`Model` class and contains
+some annotations to define the types. Types can be "simples" or "Model" children.
+
+Each Model has got:
+
+- id: that is set from database (None by default)
+- created_at: the creation date of the data (never changed)
+- updated_at: the modification date, change each time you save the model
+- deleted_at: if you set `soft_delete` in configuration, so the model is \
+              never deleted but this date is set. \
+              RethinkModel will filter objects to not get \
+              soft deleted objects
+
+.. note::
+
+    When you call :code:`save()` method, the type of each field is checked,
+    transformed and possibles actions are launched. Please take a look on
+    Checkers, Transforms and Actions documentation.
+
+.. code-block::
+
+    class User(Model):
+        username: str # very simple type
+
+    class Project(Model):
+        owner: (User, Linked) # link the user.id to owner property
+        name: (str, NonNull) # the name couldn't be None
+
+You can only set one Model in annotation. But you can set multiple Checkers,
+Transforms and Actions.
+
+.. code-block::
+
+    class Comment(Model):
+        content: str
+        author: str
+
+    class Post(Model):
+        title: (str, NonNull)
+        owner: (User, NonNull)
+        # comments are linked elements
+        # and if you remove the Post, so
+        # the comments will be dropped also
+        comments: (list, Comment, Linked, Cascade)
+
+"""
 from datetime import datetime
 
 from . import actions, db
 from .checkers import Checker
 from .db import connect
-from .exceptions import BadType, UnknownField
+from .exceptions import BadType, TooManyModels, UnknownField
 from .transforms import Linked, Transform
 
 
@@ -22,11 +69,19 @@ class Model:
 
         # keep connection
         self.__r, self.__conn = connect()
+
+        # default properties
         self.created_at = None
         self.updated_at = None
         self.deleted_at = None
 
         annotations = self._annotations().keys()
+
+        # ensure all properties are set
+        for name in annotations:
+            self.__dict__[name] = None
+
+        # and then, for given parameters...
         for name, value in kwargs.items():
             # see __setattr__ which calls __validate()
             if name not in annotations and name != "id":
@@ -41,15 +96,33 @@ class Model:
         for name, kind in annotations.items():
             if not isinstance(kind, tuple):
                 annotations[name] = (kind,)
+            # avoid repetition
+            annotations[name] = tuple(set(annotations[name]))
 
         # add the Model annotations
-        for name, kind in getattr(Model, "__annotations__").items():
-            annotations[name] = (kind,)
+        parents = [
+            parent
+            for parent in cls.mro()
+            if parent not in (cls, object) and getattr(parent, "__annotations__")
+        ]
+        for parent in parents:
+            for name, kind in getattr(parent, "__annotations__").items():
+                annotations[name] = (kind,)
+
         return annotations
 
     def __validate(self, **kwargs):
         # apply attribute from annotations
         annotations = self._annotations()
+
+        # ensure that there is no several Model subclass in each annotations
+        for name, value in annotations.items():
+            models = [m for m in value if issubclass(m, Model)]
+            if len(models) > 1:
+                raise TooManyModels(
+                    f"The {name} annotation for {self.tablename} "
+                    f"has got too many models: {models}"
+                )
 
         for name, value in kwargs.items():
             # no need to check this, it's an automated field for us
@@ -65,9 +138,15 @@ class Model:
                 # for now, it's ok. Checkers may raise exception later
                 continue
 
-            kind = annotations[name]
-            if type(value) not in kind and list not in kind:
-                if Linked in kind and isinstance(value, str):
+            kinds = annotations[name]
+
+            # append checkers types
+            kinds += tuple(
+                [k.type for k in kinds if issubclass(k, Checker) and k.type is not None]
+            )
+
+            if type(value) not in kinds and list not in kinds:
+                if Linked in kinds and isinstance(value, str):
                     # in this case, the annotation says that we need to
                     # link an object with it's id, so we accept to have
                     # a string
@@ -76,7 +155,7 @@ class Model:
                 raise BadType(
                     f'Field named "{name}" of "{self.tablename}" '
                     f"should be typed as one of "
-                    f"{kind} instead of type {type(value)}"
+                    f"{kinds} instead of type {type(value)}"
                 )
 
     def __setattr__(self, name, value):
@@ -104,8 +183,10 @@ class Model:
                 return tablename
 
             if tablename[-1] == "x":
-                tablename += "e"
-            if tablename[-1] != "s":
+                tablename += "es"
+            elif tablename[-1] == "y":
+                tablename = tablename[:-1] + "ies"
+            elif tablename[-1] != "s":
                 tablename += "s"
 
         return tablename
@@ -114,9 +195,9 @@ class Model:
         """ Check fields like unicity in base, non null values... """
         annotations = self._annotations()
         for name, kinds in annotations.items():
-            for kind in kinds:
-                if issubclass(kind, Checker):
-                    kind.check(self, name)
+            checkers = [c for c in kinds if issubclass(c, Checker)]
+            for checker in checkers:
+                checker.check(self, name)
         return True
 
     def todict(self, is_nested=False) -> dict:
@@ -133,14 +214,10 @@ class Model:
 
             # a field can contain several Model
             if isinstance(attribute, list):
-                objects = []
-                for attr in attribute:
-                    if hasattr(attr, "todict"):
-                        objects.append(attr.todict(is_nested=True))
-                    else:
-                        objects.append(attr)
-                data[name] = objects
-
+                data[name] = [
+                    attr.todict(is_nested=True) if hasattr(attr, "todict") else attr
+                    for attr in attribute
+                ]
             # or to be a Model
             elif hasattr(attribute, "todict"):
                 data[name] = attribute.todict(is_nested=True)
@@ -227,9 +304,11 @@ class Model:
         self.delete_id(self.id, model=self)
 
     @classmethod
-    def delete_id(cls, idx, model=None):
+    def delete_id(cls, idx=None, model=None):
         """ Delete the object that is identified by "id" """
-        assert idx is not None
+
+        if idx is None:
+            return
 
         for field, annotations in cls._annotations().items():
             for annotation in annotations:
@@ -253,29 +332,30 @@ class Model:
 
         for name, kinds in cls._annotations().items():
             # find the type
-            modelkind = [k for k in kinds if issubclass(k, Model)]
-            if len(modelkind) > 0:
-                modelkind = modelkind[0]
+            modelkind = None
+            modelkinds = [k for k in kinds if issubclass(k, Model)]
+            if len(modelkinds) > 0:
+                modelkind = modelkinds[0]
 
             # first, check if the attribute is a list
             # we need to rebuild object from id or dict
             if isinstance(result[name], list):
                 if Linked in kinds:
-                    # build the objects for id list
+                    # build the objects from list of IDs
                     result[name] = [
-                        modelkind(id=data)
+                        modelkind(id=data) if modelkind else data
                         for data in result[name]
                         if not isinstance(data, Model)
                     ]
                 else:
                     # build the objects from dict
                     result[name] = [
-                        modelkind(**data)
+                        modelkind(**data) if modelkind else data
                         for data in result[name]
                         if not isinstance(data, Model)
                     ]
             elif isinstance(result[name], dict):
-                result[name] = modelkind(**result[name])
+                result[name] = modelkind(**result[name]) if modelkind else result[name]
 
             # now, we need to manage the simple case of Linked
             # objects. In this case, result[name] is an "id"

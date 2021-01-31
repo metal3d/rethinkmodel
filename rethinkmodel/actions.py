@@ -11,7 +11,24 @@ ACTION_DELETE = 2
 
 
 class Action:
-    """ Action must have a `do_action` method """
+    """Action must have a `do_action` method
+
+    To declare a new action:
+
+    .. code-block::
+
+        class MyAction(Action):
+            @classmethod
+            def do_action(cls, model: object, field: str, action: int):
+                # to only make action on "UPDATE"
+                # if action != ACTION_UPDATE:
+                #     return
+
+                # get the field
+                object = getattr(model, field)
+
+                # and do whatever you want on it !
+    """
 
     @classmethod
     @abstractmethod
@@ -20,7 +37,14 @@ class Action:
 
 
 class Cascade(Action):
-    """ Delete Linked objects """
+    """Delete Linked objects
+
+    If an attribute is Linked and has got the Cascade annotation, the
+    linked object will be removed from database before the current object.
+
+    This annotation only operates on DELETE action.
+
+    """
 
     @classmethod
     def do_action(cls, model: object, field: str, action: int):

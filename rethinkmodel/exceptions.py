@@ -15,3 +15,7 @@ class BadType(Exception):
 
 class UniqueException(Exception):
     """ Error if the field already exists with this value in db """
+
+
+class TooManyModels(Exception):
+    """ Error if an annotation as more than one Model subclass """

@@ -8,10 +8,12 @@ from unittest import TestCase
 try:
     from rethinkdb import errors
     from rethinkmodel import Model, config, manage
-    from rethinkmodel.checkers import NonNull, Unique
+    from rethinkmodel.checkers import (FloatList, IntList, NonNull, StringList,
+                                       Unique)
     from rethinkmodel.db import connect
     from rethinkmodel.exceptions import (BadType, NonNullException,
-                                         UniqueException, UnknownField)
+                                         TooManyModels, UniqueException,
+                                         UnknownField)
 except ImportError as imp:
     print(imp)
     sys.exit(1)
@@ -37,6 +39,18 @@ class WithNotNone(Model):
     """ A simple objet with non null attribute """
 
     username: (str, NonNull)
+
+
+class TypeChecks(Model):
+    """ A little more complex model, with list of "strings", "int"... """
+
+    strings: StringList
+    integers: IntList
+    floats: FloatList
+
+
+class ManyModels(Model):
+    foo: (User, WithNotNone)  # must fails with TooManyModels exception
 
 
 # initialte database
@@ -161,3 +175,29 @@ class DatabaseTests(TestCase):
 
         fetch = User.get(user2.id)
         self.assertIsNone(fetch)
+
+    def test_typecheckers(self):
+        """ Test sting, int, and float checkers """
+        check = TypeChecks(
+            integers=[42, 96], floats=[33.3, 67.9], strings=["foo", "bar", "baz"]
+        )
+        check.save()
+
+        back = TypeChecks.get(check.id)
+        self.assertListEqual(back.integers, check.integers)
+        self.assertListEqual(back.strings, check.strings)
+        self.assertListEqual(back.floats, check.floats)
+
+        # try fail
+        with self.assertRaises(BadType):
+            TypeChecks(integers=[23, "foo"]).save()
+        with self.assertRaises(BadType):
+            TypeChecks(floats=[23.4, "foo"]).save()
+        with self.assertRaises(BadType):
+            TypeChecks(strings=[23, "foo"]).save()
+
+    def test_too_many_models(self):
+        """ Must raise TooManyModels """
+        with self.assertRaises(TooManyModels):
+            model = ManyModels(foo=User(username="too many model user"))
+            model.save()
