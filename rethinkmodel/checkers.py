@@ -17,7 +17,7 @@ Checkers can be cumulated.
 # pylint: disable=too-few-public-methods
 from abc import abstractmethod
 
-from .exceptions import NonNullException, UniqueException
+from .exceptions import BadType, NonNullException, UniqueException
 
 
 class Checker:
@@ -32,6 +32,29 @@ class Checker:
         """Apply the checkpoint, each checker must
         raise an exception if it fails.
         """
+
+    @classmethod
+    @property
+    def type(cls):
+        """ Gives the representation type if needed """
+        return None
+
+
+class List(Checker):  # pylint: disable=abstract-method
+    """ A list check """
+
+    @classmethod
+    def check(cls, model, field):
+        """Check if the element is a list,
+        either raise :code:`BadType` exception."""
+        element = getattr(model, field)
+        if not isinstance(element, list):
+            raise BadType(f"The {field} attribute should be a list, not {type(field)}")
+
+    @classmethod
+    @property
+    def type(cls):
+        return list
 
 
 class Unique(Checker):
@@ -55,3 +78,55 @@ class NonNull(Checker):
         """ Check if field is None or raise :code:`NonNullException` """
         if getattr(model, field) is None:
             raise NonNullException(f"{field} value cannot be None")
+
+
+class StringList(List):
+    """ Ensure it's a string list """
+
+    @classmethod
+    def check(cls, model, field):
+        """Check if the field is a list of strings
+        or raise a :code:`BadType` exception"""
+        super().check(model, field)
+        elements = getattr(model, field)
+
+        for element in elements:
+            if not isinstance(element, str):
+                raise BadType(
+                    f"{field} should be a list of strings, it contains a {type(element)}"
+                )
+
+
+class FloatList(List):
+    """ Ensure it's a float list """
+
+    @classmethod
+    def check(cls, model, field):
+        """Check if field is a list of float or
+        raise a :code:`BadType` exception"""
+        super().check(model, field)
+        elements = getattr(model, field)
+
+        for element in elements:
+            if not isinstance(element, float):
+                raise BadType(
+                    f"{field} should be a list of strings, it contains a {type(element)}"
+                )
+
+
+class IntList(List):
+    """ Ensure it's a integer list """
+
+    @classmethod
+    def check(cls, model, field):
+        """Check if field is a list of integer or
+        raise a :code:`BadType` exception"""
+        elements = getattr(model, field)
+        if not isinstance(elements, list):
+            raise BadType(f"{field} should be a list, not {type(elements)}")
+
+        for element in elements:
+            if not isinstance(element, int):
+                raise BadType(
+                    f"{field} should be a list of strings, it contains a {type(element)}"
+                )
