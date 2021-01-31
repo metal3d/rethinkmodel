@@ -9,7 +9,7 @@ coverage = "*"
 pylint = "*"
 pep517 = "*"
 sphinx = "*"
-sphinx-rtd-theme = "*"
+flask-sphinx-themes = "*"
 
 [packages]
 rethinkdb = "*"

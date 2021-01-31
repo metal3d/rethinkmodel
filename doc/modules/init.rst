@@ -1,5 +1,6 @@
-Top package
-===========
+Configuration
+=============
 
 .. automodule:: rethinkmodel
     :members:
+    :show-inheritance:

@@ -19,3 +19,10 @@ clean-doc:
 
 clean:
 	rm -rf cover .coverage build dist *.egg-info
+
+.ONESHELL:
+listen-doc:
+	make clean-doc doc
+	while true; do
+		inotifywait -e modify -r doc/ | grep ".rst" && $(MAKE) clean-doc doc
+	done
