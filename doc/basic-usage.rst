@@ -1,6 +1,39 @@
 Basic usage
 ===========
 
+First step
+----------
+
+At first, you need to configure your database. Be sure that RethinkDB is launched and that you can access the service port.
+
+By default, RethinkModel will check this environment variables:
+
+- :code:`RM_DBNAME` to set the database to use, default is "test"
+- :code:`RM_HOST` default to "127.0.0.1"
+- :code:`RM_PORT` default to 28015
+- :code:`RM_USER` default to "admin" (the RethinkDB default user)
+- :code:`RM_PASSWORD` default to empty string (the RethinkDB default)
+- :code:`RM_TIMEOUT` default to 10 (in seconds)
+- :code:`RM_SOFT_DELETE` with is :code:`False` by default
+
+If you want to configure this in python, you can use the :code:`rethinkmodel.config()` function.
+
+.. warning::
+
+    If you use the "soft_delete" option, models in database are not deleted but the "deleted_at" will be set to the deletion date. RethinkModel will filter deleted objects. This implies a little loss of performance.
+
+
+.. note::
+
+    TEST ?
+
+.. danger::
+
+    Wow !
+
+Create models
+--------------
+
 The basic usage is to create a class with annotations to declare fields to save. For example:
 
 There are 4 automatic fields comming from :code:`Model` class:

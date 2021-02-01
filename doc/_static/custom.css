@@ -1,0 +1,27 @@
+.admonition.note {
+    background-color: #ebf7ff;
+}
+.admonition.warning {
+    background-color: #fff9f6;
+}
+.admonition.danger {
+    background-color: #ff9e9e;
+}
+
+.admonition::before {
+    position: absolute;
+    margin-left: -1.3em;
+    margin-top: -.9em;
+    font-size: 2em;
+    filter: drop-shadow(4px 4px 8px rgba(0,0,0,.2));
+
+}
+.admonition.danger::before {
+    content: "🔥"
+}
+.admonition.warning::before {
+    content: "⚡"
+}
+.admonition.note::before {
+    content: "⚪"
+}
