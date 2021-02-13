@@ -77,7 +77,15 @@ That means that you can get the title of the article by calling:
     comment.post.title
 
 
-Now, how to get comments from a post ? You may use :code:`filter` method to get them.
+Now, how to get comments from a post ? The easiest method is to use :code:`join()` method:
+
+.. code-block::
+
+    post = Post.get(post_id).join(Comment)
+    post.comments # contains the Comment objects list
+
+
+You may also use :code:`filter` method to get them.
 
 .. code-block::
 
