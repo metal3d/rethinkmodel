@@ -13,7 +13,7 @@ install:
   - pipenv install --dev
 
 script:
-  - sudo service rethinkdb start && sleep 5
+  - sudo service rethinkdb restart && sleep 10
   - make test
 
 after_success:
