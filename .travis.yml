@@ -1,9 +1,13 @@
 ---
+langage: python
+python:
+  - 3.9
 addons:
   rethinkdb: 2.4.1
 
 install:
   - pip install pipenv
-  - pipenv install --dev --python 3.8
+  - pipenv install --dev
+
 script:
   - make test
