@@ -3,7 +3,10 @@ langage: python
 python:
   - 3.9
 addons:
-  rethinkdb: 2.4.1
+  rethinkdb: 2.4
+
+env:
+  RM_HOST: localhost
 
 install:
   - pip install pipenv
@@ -11,3 +14,6 @@ install:
 
 script:
   - make test
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
