@@ -3,7 +3,7 @@ langage: python
 python:
   - 3.9
 addons:
-  rethinkdb: 2.4
+  rethinkdb: 2.3
 
 env:
   RM_HOST: localhost
