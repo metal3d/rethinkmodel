@@ -1,0 +1,9 @@
+---
+addons:
+  rethinkdb: 2.4.1
+
+install:
+  - pip install pipenv
+  - pipenv install --dev
+script:
+  - make test
