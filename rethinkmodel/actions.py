@@ -48,7 +48,7 @@ class Cascade(Action):
 
     @classmethod
     def do_action(cls, model: object, field: str, action: int):
-        """ If the field is Linked to children, so delete children """
+        """ If the field is Linked to children (list), so delete children """
         if action != ACTION_DELETE:
             return
 

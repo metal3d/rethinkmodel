@@ -168,3 +168,27 @@ class LinkedObjectTests(TestCase):
         fetch = LinkedBill.get(bill.id)
         for idx, product in enumerate(products):
             self.assertEqual(fetch.products[idx].id, product.id)
+
+    def test_get_joins(self):
+        """ Test the "join" method """
+        user = User(username="joined user")
+        user.save()
+
+        project = Project(name="joined projet", user=user)
+        project.save()
+
+        # now, let's get the user with joined project
+
+        joined = User.get(user.id).join(Project)
+        self.assertTrue(hasattr(joined, Project.tablename))
+        self.assertTrue(len(joined.projects) > 0)
+        self.assertEqual(joined.projects[0].id, project.id)
+
+        # update object should not change anything
+        joined.name = "joined user modified"
+        joined.save()
+
+        joined2 = User.get(user.id).join(Project)
+        self.assertTrue(hasattr(joined2, Project.tablename))
+        self.assertTrue(len(joined2.projects) > 0)
+        self.assertEqual(joined2.projects[0].id, project.id)

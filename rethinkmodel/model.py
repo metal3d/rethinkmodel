@@ -1,4 +1,4 @@
-""" Model definition 
+""" Model definition
 
 Each data object **must** inherit from :code:`Model` class and contains
 some annotations to define the types. Types can be "simples" or "Model" children.
@@ -28,23 +28,17 @@ Each Model has got:
         owner: (User, Linked) # link the user.id to owner property
         name: (str, NonNull) # the name couldn't be None
 
-You can only set one Model in annotation. But you can set multiple Checkers,
-Transforms and Actions.
+
+To get Linked objects, it's possible to use "join()" method
 
 .. code-block::
 
-    class Comment(Model):
-        content: str
-        author: str
+    user_id = "..."
+    user = User.join(user_id, Project)
+    # user.projects is set by the Model
 
-    class Post(Model):
-        title: (str, NonNull)
-        owner: (User, NonNull)
-        # comments are linked elements
-        # and if you remove the Post, so
-        # the comments will be dropped also
-        comments: (list, Comment, Linked, Cascade)
-
+You can only set one Model in annotation. But you can set multiple Checkers,
+Transforms and Actions.
 """
 from datetime import datetime
 
@@ -75,7 +69,7 @@ class Model:
         self.updated_at = None
         self.deleted_at = None
 
-        annotations = self._annotations().keys()
+        annotations = self.annotations().keys()
 
         # ensure all properties are set
         for name in annotations:
@@ -91,7 +85,8 @@ class Model:
             self.__setattr__(name, value)
 
     @classmethod
-    def _annotations(cls) -> dict:
+    def annotations(cls) -> dict:
+        """ Return annotations merged with all parent annotations """
         annotations = getattr(cls, "__annotations__")
         for name, kind in annotations.items():
             if not isinstance(kind, tuple):
@@ -99,21 +94,22 @@ class Model:
             # avoid repetition
             annotations[name] = tuple(set(annotations[name]))
 
-        # add the Model annotations
+        # add the parents Model annotations
         parents = [
             parent
             for parent in cls.mro()
-            if parent not in (cls, object) and getattr(parent, "__annotations__")
+            if parent not in (cls, object) and issubclass(parent, Model)
         ]
+
         for parent in parents:
-            for name, kind in getattr(parent, "__annotations__").items():
-                annotations[name] = (kind,)
+            for name, kind in parent.annotations().items():
+                annotations[name] = kind
 
         return annotations
 
     def __validate(self, **kwargs):
         # apply attribute from annotations
-        annotations = self._annotations()
+        annotations = self.annotations()
 
         # ensure that there is no several Model subclass in each annotations
         for name, value in annotations.items():
@@ -150,7 +146,6 @@ class Model:
                     # in this case, the annotation says that we need to
                     # link an object with it's id, so we accept to have
                     # a string
-                    # TODO: validate the id ?
                     continue
                 raise BadType(
                     f'Field named "{name}" of "{self.tablename}" '
@@ -159,7 +154,7 @@ class Model:
                 )
 
     def __setattr__(self, name, value):
-        if name in self._annotations():
+        if name in self.annotations():
             # will raise exception if something goes wrong
             self.__validate(**{name: value})
 
@@ -193,7 +188,7 @@ class Model:
 
     def __process_checkers(self):
         """ Check fields like unicity in base, non null values... """
-        annotations = self._annotations()
+        annotations = self.annotations()
         for name, kinds in annotations.items():
             checkers = [c for c in kinds if issubclass(c, Checker)]
             for checker in checkers:
@@ -203,7 +198,7 @@ class Model:
     def todict(self, is_nested=False) -> dict:
         """ Return dict that can be written in db """
 
-        annotations = self._annotations()
+        annotations = self.annotations()
 
         # get only annotated attributes
         data = {k: getattr(self, k) for k in annotations.keys()}
@@ -236,7 +231,10 @@ class Model:
             data["id"] = self.id
         if is_nested:
             for attr in ("created", "updated", "deleted"):
-                del data[attr + "_at"]
+                try:
+                    del data[attr + "_at"]
+                except KeyError:
+                    pass
         return data
 
     def save(self) -> object:
@@ -255,7 +253,7 @@ class Model:
 
         # Find action annotaions
         todo = {}
-        for field, kinds in self._annotations().items():
+        for field, kinds in self.annotations().items():
             actionlist = [kind for kind in kinds if issubclass(kind, actions.Action)]
             todo[field] = actionlist
         for field, act in todo.items():
@@ -310,7 +308,7 @@ class Model:
         if idx is None:
             return
 
-        for field, annotations in cls._annotations().items():
+        for field, annotations in cls.annotations().items():
             for annotation in annotations:
                 if issubclass(annotation, actions.Action):
                     if model is None:
@@ -330,7 +328,7 @@ class Model:
     def __build(cls, result: dict):
         """ Build the object with nested object if there's Linked attributes """
 
-        for name, kinds in cls._annotations().items():
+        for name, kinds in cls.annotations().items():
             # find the type
             modelkind = None
             modelkinds = [k for k in kinds if issubclass(k, Model)]
@@ -381,6 +379,23 @@ class Model:
             return [cls.__build(u) for u in results]
 
         return None
+
+    def join(self, *models) -> object:
+        """ Join linked models to the current model, fetched by id """
+
+        for model in models:
+            # find linked model
+            link_name = [
+                attr
+                for attr, kinds in model.annotations().items()
+                if self.__class__ in kinds and Linked in kinds
+            ]
+            if len(link_name) == 0:
+                continue
+            data = model.filter({link_name[0]: self.id})
+            # self.__dict__[model.tablename] = data
+            setattr(self, model.tablename, data)
+        return self
 
     def __del__(self):
         try:
