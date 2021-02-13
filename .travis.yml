@@ -4,6 +4,6 @@ addons:
 
 install:
   - pip install pipenv
-  - pipenv install --dev
+  - pipenv install --dev --python 3.8
 script:
   - make test
