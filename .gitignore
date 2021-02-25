@@ -1,3 +1,5 @@
+.scannerwork/*
+coverage.xml
 cover
 cover/*
 .coverage
