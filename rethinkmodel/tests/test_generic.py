@@ -4,6 +4,7 @@
 import unittest
 from typing import Optional
 
+from rethinkmodel import config
 from rethinkmodel.manage import manage
 from rethinkmodel.model import Model
 
@@ -31,6 +32,7 @@ utils.clean("test_generic")
 
 class GenericTest(unittest.TestCase):
     def setUp(self) -> None:
+        config(dbname="test_generic")
         manage(__name__)
         return super().setUp()
 

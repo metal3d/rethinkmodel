@@ -70,6 +70,7 @@ def auto(member: Type[Model]):
 
     if not issubclass(member, Model) or member is Model:
         return
+    print(db.DB_NAME)
     rdb = RethinkDB()
     conn = rdb.connect(
         host=db.HOST,

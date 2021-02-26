@@ -22,11 +22,13 @@ Each Model has got:
 .. code-block::
 
     class User(Model):
-        username: str # very simple type
+        username: Type[str]
+        tags: List[str]
 
     class Project(Model):
-        owner: (User, Linked) # link the user.id to owner property
-        name: (str, NonNull) # the name couldn't be None
+        owner: Type[User]  # bind an User id here
+        name: Type[str] # other field
+        comment: Optional[str] # optional means that "None" is accepted
 
 
 To get Linked objects, it's possible to use "join()" method
@@ -41,19 +43,23 @@ You can only set one Model in annotation. But you can set multiple Checkers,
 Transforms and Actions.
 """
 from datetime import datetime
-from typing import Any, Optional, Union, get_type_hints
+from typing import Any, Optional, Type, get_args, get_type_hints
 
 from . import db
 from .db import connect
 
 
-class Model:
-    """ Model is the parent class of all tables for RethinkDB """
+class BaseModel:  # pylint: disable=too-few-public-methods
+    """ Base Model interface """
 
     id: Optional[str]
     created_at: Optional[datetime]
     deleted_at: Optional[datetime]
     updated_at: Optional[datetime]
+
+
+class Model(BaseModel):
+    """ Model is the parent class of all tables for RethinkDB """
 
     def __init__(self, **kwargs):
         """ Construct the object with checks on types in annotations """
@@ -103,13 +109,16 @@ class Model:
 
         return tablename
 
-    def todict(self, is_nested=False) -> dict:
+    def todict(self) -> dict:
         """ Return dict that can be written in db """
 
         annotations = get_type_hints(self.__class__)
 
         # get only annotated attributes
         data = {k: getattr(self, k) for k in annotations.keys()}
+        for name, val in data.items():
+            if isinstance(val, Model):
+                data[name] = val.id
 
         # set the id if it exists
         if self.id:
@@ -196,8 +205,20 @@ class Model:
 
         return []
 
-    def join(self, *models) -> object:
+    def join(self, *models: Type[BaseModel]) -> object:
         """ Join linked models to the current model, fetched by id """
+        for model in models:
+            if not issubclass(model, Model):
+                continue
+
+            # find the right attribute in "self" that is bounded to "model"
+            hints = get_type_hints(model)
+            for name, hint in hints.items():
+                args = get_args(hint)
+                if self.__class__ in args:
+                    fields = model.filter({name: self.id})
+                    setattr(self, model.tablename, fields)
+
         return self
 
     def __del__(self):
