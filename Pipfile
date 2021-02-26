@@ -6,10 +6,10 @@ verify_ssl = true
 [dev-packages]
 nose = "*"
 coverage = "*"
-pylint = "*"
 pep517 = "*"
 sphinx = "*"
 flask-sphinx-themes = "*"
+pylint = "*"
 
 [packages]
 rethinkdb = "*"
