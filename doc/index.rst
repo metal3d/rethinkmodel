@@ -11,9 +11,10 @@ RethinkModel aims to help you to describe your data as classes to be easilly cre
 
 .. _RethinkDB: https://www.rethinkdb.com
 
-The package provides Checkers, Transforms and Actions. It will help you to secure your model creation with type checking, soft deletion or not, logs, cascade deletion, model links, and many others things.
+Rethink:Model make uses of `typing support`_ to define annotations - annotations describe the model fields. That's easy, you only have to import the standard `typing` module, and use any of `Optionnal`, `Type`, `List`, `Union`... types.
 
-RethinkModel uses annotations to describe you Model objects. You can extends everything you want to bind your needs.
+.. `typing support`: https://docs.python.org/3/library/typing.html
+
 
 .. toctree::
    :maxdepth: 2
