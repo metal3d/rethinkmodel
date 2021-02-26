@@ -29,14 +29,17 @@ the job. For example:
 """
 import glob
 import importlib
+import importlib.util
 import inspect
 import logging
 import os.path
 import sys
+from typing import Any, Type
 
 from rethinkdb import RethinkDB
 
-from . import Model, db
+from rethinkmodel import db
+from rethinkmodel.model import Model
 
 LOG = logging.getLogger("rethinkmodel")
 LOG.setLevel(logging.INFO)
@@ -62,12 +65,11 @@ def check_db():
     conn.close()
 
 
-def auto(member: type):
+def auto(member: Type[Model]):
     """ automatic database and table creation for the given type (Model child)"""
 
     if not issubclass(member, Model) or member is Model:
         return
-
     rdb = RethinkDB()
     conn = rdb.connect(
         host=db.HOST,
@@ -87,13 +89,15 @@ def auto(member: type):
     conn.close()
 
 
-def manage(mod: (type, str)):
+def manage(mod: Any):
     """Get all classes from given module and
     call "auto()" function to create table. This function accept
     a module, or the module name as string."""
+    imported = mod
     if isinstance(mod, str):
-        mod = __import__(mod)
-    members = inspect.getmembers(mod)
+        imported = importlib.import_module(mod)
+    members = inspect.getmembers(imported)
+
     for _, obj in members:
         if inspect.isclass(obj):
             auto(obj)
@@ -107,7 +111,7 @@ def introspect(modpath: str):
     try:
         spec = importlib.util.spec_from_file_location(name, modpath)
         mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
+        spec.loader.load_module(mod.__name__)
     except ImportError:
         return
 

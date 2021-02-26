@@ -12,13 +12,8 @@ The *config* function will keep connection information inside the
 Note: this will probably change in future releases to allow usage of multiple
 databases connections.
 """
-import os
-
-from rethinkdb import RethinkDB
 
 from . import db
-# make aliase to ease Model access from top package
-from .model import Model
 
 __version__ = "0.0.1"
 

@@ -1,5 +1,6 @@
 """ RethinkDB manager """
 import os
+from typing import Any
 
 from rethinkdb import RethinkDB
 
@@ -9,7 +10,7 @@ HOST = os.environ.get("RM_HOST", "127.0.0.1")
 USER = os.environ.get("RM_USER", "admin")
 PASSWORD = os.environ.get("RM_PASSWORD", "")
 TIMEOUT = int(os.environ.get("RM_TIMEOUT", 20))
-SSL = None
+SSL: Any = None
 SOFT_DELETE = os.environ.get("RM_SOFT_DELETE", "false").lower() in (
     "true",
     "yes",

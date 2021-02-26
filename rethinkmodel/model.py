@@ -41,20 +41,19 @@ You can only set one Model in annotation. But you can set multiple Checkers,
 Transforms and Actions.
 """
 from datetime import datetime
+from typing import Any, Optional, Union, get_type_hints
 
-from . import actions, db
-from .checkers import Checker
+from . import db
 from .db import connect
-from .exceptions import BadType, TooManyModels, UnknownField
-from .transforms import Linked, Transform
 
 
 class Model:
     """ Model is the parent class of all tables for RethinkDB """
 
-    created_at: datetime
-    deleted_at: datetime
-    updated_at: datetime
+    id: Optional[str]
+    created_at: Optional[datetime]
+    deleted_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
     def __init__(self, **kwargs):
         """ Construct the object with checks on types in annotations """
@@ -69,98 +68,16 @@ class Model:
         self.updated_at = None
         self.deleted_at = None
 
-        annotations = self.annotations().keys()
-
-        # ensure all properties are set
-        for name in annotations:
-            self.__dict__[name] = None
+        annotations = get_type_hints(self.__class__).keys()
 
         # and then, for given parameters...
         for name, value in kwargs.items():
             # see __setattr__ which calls __validate()
             if name not in annotations and name != "id":
-                raise UnknownField(
+                raise AttributeError(
                     f"The field named {name} is not declared in {self.__class__.__name__}"
                 )
-            self.__setattr__(name, value)
-
-    @classmethod
-    def annotations(cls) -> dict:
-        """ Return annotations merged with all parent annotations """
-        annotations = getattr(cls, "__annotations__")
-        for name, kind in annotations.items():
-            if not isinstance(kind, tuple):
-                annotations[name] = (kind,)
-            # avoid repetition
-            annotations[name] = tuple(set(annotations[name]))
-
-        # add the parents Model annotations
-        parents = [
-            parent
-            for parent in cls.mro()
-            if parent not in (cls, object) and issubclass(parent, Model)
-        ]
-
-        for parent in parents:
-            for name, kind in parent.annotations().items():
-                annotations[name] = kind
-
-        return annotations
-
-    def __validate(self, **kwargs):
-        # apply attribute from annotations
-        annotations = self.annotations()
-
-        # ensure that there is no several Model subclass in each annotations
-        for name, value in annotations.items():
-            models = [m for m in value if issubclass(m, Model)]
-            if len(models) > 1:
-                raise TooManyModels(
-                    f"The {name} annotation for {self.tablename} "
-                    f"has got too many models: {models}"
-                )
-
-        for name, value in kwargs.items():
-            # no need to check this, it's an automated field for us
-            if name == "id":
-                continue
-
-            if name not in annotations:
-                raise UnknownField(
-                    f"The field named {name} is not declared in {self.__class__.__name__}"
-                )
-
-            if value is None:
-                # for now, it's ok. Checkers may raise exception later
-                continue
-
-            kinds = annotations[name]
-
-            # append checkers types
-            kinds += tuple(
-                [k.type for k in kinds if issubclass(k, Checker) and k.type is not None]
-            )
-
-            if type(value) not in kinds and list not in kinds:
-                if Linked in kinds and isinstance(value, str):
-                    # in this case, the annotation says that we need to
-                    # link an object with it's id, so we accept to have
-                    # a string
-                    continue
-                raise BadType(
-                    f'Field named "{name}" of "{self.tablename}" '
-                    f"should be typed as one of "
-                    f"{kinds} instead of type {type(value)}"
-                )
-
-    def __setattr__(self, name, value):
-        if name in self.annotations():
-            # will raise exception if something goes wrong
-            self.__validate(**{name: value})
-
-        # then, keep the value in attribute
-        # (we use __dict__ to avoid recursion)
-        self.__dict__[name] = value
+            setattr(self, name, value)
 
     @classmethod
     @property
@@ -168,7 +85,7 @@ class Model:
         """Get the tablename, generated if not provided
         in __tablename__ attributes"""
         try:
-            tablename = cls.__tablename__.lower()
+            tablename = getattr(cls, "__tablename__").lower()
         except AttributeError:
             tablename = cls.__name__.lower()
 
@@ -178,7 +95,7 @@ class Model:
                 return tablename
 
             if tablename[-1] == "x":
-                tablename += "es"
+                tablename = tablename[:-1] + "ces"
             elif tablename[-1] == "y":
                 tablename = tablename[:-1] + "ies"
             elif tablename[-1] != "s":
@@ -186,99 +103,41 @@ class Model:
 
         return tablename
 
-    def __process_checkers(self):
-        """ Check fields like unicity in base, non null values... """
-        annotations = self.annotations()
-        for name, kinds in annotations.items():
-            checkers = [c for c in kinds if issubclass(c, Checker)]
-            for checker in checkers:
-                checker.check(self, name)
-        return True
-
     def todict(self, is_nested=False) -> dict:
         """ Return dict that can be written in db """
 
-        annotations = self.annotations()
+        annotations = get_type_hints(self.__class__)
 
         # get only annotated attributes
         data = {k: getattr(self, k) for k in annotations.keys()}
 
-        # must call "todict" on every element if it's a Model subclass
-        for name, kinds in annotations.items():
-            attribute = getattr(self, name)
-
-            # a field can contain several Model
-            if isinstance(attribute, list):
-                data[name] = [
-                    attr.todict(is_nested=True) if hasattr(attr, "todict") else attr
-                    for attr in attribute
-                ]
-            # or to be a Model
-            elif hasattr(attribute, "todict"):
-                data[name] = attribute.todict(is_nested=True)
-
-            # find Transfrom annotations and apply them
-            transformations = [
-                transformation
-                for transformation in kinds
-                if issubclass(transformation, Transform)
-            ]
-            for transormation in transformations:
-                data[name] = transormation.transform(self, name)
-
         # set the id if it exists
         if self.id:
             data["id"] = self.id
-        if is_nested:
-            for attr in ("created", "updated", "deleted"):
-                try:
-                    del data[attr + "_at"]
-                except KeyError:
-                    pass
         return data
 
-    def save(self) -> object:
+    def save(self) -> Any:
         """ Insert or update data if self.id is set """
-
-        # check if all attributes are ok
-        self.__process_checkers()
-
-        # prepare date and action type
-        if self.id is None:
-            self.created_at = datetime.astimezone(datetime.now())
-            action_type = actions.ACTION_CREATE
+        now = datetime.astimezone(datetime.now())
+        if self.id:
+            self.updated_at = now
+            data = self.todict()
+            res = (
+                self.__r.table(self.tablename)
+                .get(self.id)
+                .update(data)
+                .run(self.__conn)
+            )
         else:
-            self.updated_at = datetime.astimezone(datetime.now())
-            action_type = actions.ACTION_UPDATE
-
-        # Find action annotaions
-        todo = {}
-        for field, kinds in self.annotations().items():
-            actionlist = [kind for kind in kinds if issubclass(kind, actions.Action)]
-            todo[field] = actionlist
-        for field, act in todo.items():
-            for action in act:
-                action.do_action(self, field, action_type)
-
-        data = self.todict()
-
-        rdb, conn = self.__r, self.__conn
-        if self.id is not None:
-            # update if the object has got an id
+            self.created_at = now
+            data = self.todict()
             del data["id"]
-            res = rdb.table(self.tablename).get(self.id).update(data).run(conn)
-        else:
-            # insert if the object hasn't got id
-            res = rdb.table(self.tablename).insert(data).run(conn)
-            if res["inserted"] > 0:
-                self.id = res["generated_keys"][0]
-            else:
-                raise Exception(res)
-
+            res = self.__r.table(self.tablename).insert(data).run(self.__conn)
+            self.id = res.get("generated_keys")[0]
         return self
 
     @classmethod
-    def get(cls, uid: str) -> object:
+    def get(cls, uid: Optional[str]) -> Any:
         """ Return the correct model object """
 
         if db.SOFT_DELETE:
@@ -299,74 +158,31 @@ class Model:
 
     def delete(self):
         """ Delete this object from DB """
-        self.delete_id(self.id, model=self)
+        if db.SOFT_DELETE:
+            self.__r.table(self.tablename).get(self.id).update(
+                {"deleted_at": datetime.astimezone(datetime.now())}
+            ).run(self.__conn)
+        else:
+            self.__r.table(self.tablename).get(self.id).delete().run(self.__conn)
 
     @classmethod
-    def delete_id(cls, idx=None, model=None):
+    def delete_id(cls, idx=None):
         """ Delete the object that is identified by "id" """
 
         if idx is None:
             return
-
-        for field, annotations in cls.annotations().items():
-            for annotation in annotations:
-                if issubclass(annotation, actions.Action):
-                    if model is None:
-                        model = cls.get(idx)
-                    annotation.do_action(model, field, actions.ACTION_DELETE)
-
-        rdb, conn = connect()
-        if db.SOFT_DELETE:
-            rdb.table(cls.tablename).get(idx).update(
-                {"deleted_at": datetime.astimezone(datetime.now())}
-            ).run(conn)
-        else:
-            rdb.table(cls.tablename).get(idx).delete().run(conn)
-        conn.close()
+        data = cls.__build({})
+        data.id = idx
+        data.delete()
 
     @classmethod
     def __build(cls, result: dict):
         """ Build the object with nested object if there's Linked attributes """
 
-        for name, kinds in cls.annotations().items():
-            # find the type
-            modelkind = None
-            modelkinds = [k for k in kinds if issubclass(k, Model)]
-            if len(modelkinds) > 0:
-                modelkind = modelkinds[0]
-
-            # first, check if the attribute is a list
-            # we need to rebuild object from id or dict
-            if isinstance(result[name], list):
-                if Linked in kinds:
-                    # build the objects from list of IDs
-                    result[name] = [
-                        modelkind(id=data) if modelkind else data
-                        for data in result[name]
-                        if not isinstance(data, Model)
-                    ]
-                else:
-                    # build the objects from dict
-                    result[name] = [
-                        modelkind(**data) if modelkind else data
-                        for data in result[name]
-                        if not isinstance(data, Model)
-                    ]
-            elif isinstance(result[name], dict):
-                result[name] = modelkind(**result[name]) if modelkind else result[name]
-
-            # now, we need to manage the simple case of Linked
-            # objects. In this case, result[name] is an "id"
-            elif Linked in kinds and list not in kinds:
-                # we need to find the linked element
-                tofind = result[name]
-                linked = modelkind.get(tofind)
-                result[name] = linked
-
         return cls(**result)
 
     @classmethod
-    def filter(cls, select: dict = None) -> dict:
+    def filter(cls, select: dict = None) -> list:
         """ Select object in database with filters """
 
         # force not deleted object
@@ -378,23 +194,10 @@ class Model:
         if hasattr(results, "items") and len(results.items) > 0:
             return [cls.__build(u) for u in results]
 
-        return None
+        return []
 
     def join(self, *models) -> object:
         """ Join linked models to the current model, fetched by id """
-
-        for model in models:
-            # find linked model
-            link_name = [
-                attr
-                for attr, kinds in model.annotations().items()
-                if self.__class__ in kinds and Linked in kinds
-            ]
-            if len(link_name) == 0:
-                continue
-            data = model.filter({link_name[0]: self.id})
-            # self.__dict__[model.tablename] = data
-            setattr(self, model.tablename, data)
         return self
 
     def __del__(self):
