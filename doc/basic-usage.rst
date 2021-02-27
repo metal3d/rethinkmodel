@@ -28,7 +28,7 @@ There are 4 automatic fields comming from :code:`Model` class:
 - :code:`id` is set by RethinkDB
 - :code:`created_at` when you save an object without id (create)
 - :code:`updated_at` when you save an object with a given id (update)
-- :code:`deleted_at` is set to :code:`True` when you delete the object, and if you set :code:`rethinkmodel.db.SOFT_DELETE` to :code:`True`
+- :code:`deleted_at` is set to deleted :code:`datatime` when you delete the object, and if you set :code:`rethinkmodel.db.SOFT_DELETE` to :code:`True`
 
 .. code-block::
 

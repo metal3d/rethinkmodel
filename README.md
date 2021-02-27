@@ -1,24 +1,29 @@
-# RethinkModel
+# Rethink:Model
+
+Use Python `typing` package and annotation to describe data for RethinkDB.
 
 This package is inspired of what we can do with SQLAlquemy by using a "Model pattern" to describe tables and fields for [RethinkDB](https://www.rethinkdb.com). The main differences are:
 
 - because RethinkDB is document based, we don't use SQL but `dict` representation
 - the `Model` class which is the ancestor class of tables uses "annotations" instead of static properties
-- for nested objects, you have the possibility to "link" or "hold" the objects
 
 The choice of annotation was made for the ease of writing, but it is also done to avoid errors. Annotations can only contain "types" instead of entity representation object.
 
 An example:
 
 ```python
+
+from typing import Optional, Type
+from rethinkmodel.model import Model
+
 class User(Model):
-    username: (str, Unique)
-    email: (str, Unique)
-    password: str
+    username: Type[str]
+    email: Optional[str]
+    password: Type[str]
 
 class Project(Model)
-    name: str
-    owner: (User, Linked) # Linked => only saves the "id"
+    name: Type[str]
+    owner: Type[User]
 
 ### Save objects in DB
 user = User(username="foo", email="me@domain", password="secret")
@@ -46,25 +51,3 @@ dbproj = Project.get(project.id)
 # now, dbproj.owner is a User object, even if in db it's an ID
 ```
 
-# Common methods
-
-The full documentation is more complete, but below are the most used methods
-
-| Method          | Access          | Description                                                                                           |
-| --------------- | --------------- | ----------------------------------------------------------------------------------------------------- |
-| `tablename`     | static property | produce the table name, can be override with `__tablename__` static property in your model definition |
-| `get(id)`       | static method   | returns the object taken from database for the given ID, None if not found                            |
-| `filter(id)`    | static method   | returns a list of found objects matching the `dict` selection                                         |
-| `todict()`      | method          | returns the `dict` representation, the format corresponds to what will be set in RethinkDB database   |
-| `delete()`      | method          | delete the current object from database                                                               |
-| `delete_id(id)` | static method   | method to call from you Model type to delete an object in database that is identified by the given id |
-
-The complete documentation is in progress.
-
-# What's next
-
-- [ ] More checks on attributes to avoid multiple Model in attributes
-- [ ] Take decision to save model in composite object (nested objects)
-- [ ] Give possibility to propose "index" annotation
-- [ ] Enhance filter method
-- [ ] Cascade deletion (top/down)
