@@ -70,7 +70,7 @@ def auto(member: Type[Model]):
 
     if not issubclass(member, Model) or member is Model:
         return
-    print(db.DB_NAME)
+
     rdb = RethinkDB()
     conn = rdb.connect(
         host=db.HOST,
@@ -86,6 +86,12 @@ def auto(member: Type[Model]):
     if member.tablename not in tables:
         LOG.info("create table %s", member.tablename)
         rdb.table_create(member.tablename).run(conn)
+        indexes = member.get_index()
+        if indexes:
+            # TODO: at this time, it's only working with simple index
+            for index in indexes:
+                rdb.table(member.tablename).index_create(index).run(conn)
+                rdb.table(member.tablename).index_wait(index).run(conn)
 
     conn.close()
 

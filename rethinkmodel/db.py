@@ -1,6 +1,12 @@
-""" RethinkDB manager """
+""" RethinkDB connection manager
+
+It only contains the :code:`connect()` function. It's preferable to use
+the :code:`rethinkmodel.config()` function to set up connection informations
+befor to call :code:`connec()` function.
+
+"""
 import os
-from typing import Any
+from typing import Any, Tuple
 
 from rethinkdb import RethinkDB
 
@@ -19,7 +25,7 @@ SOFT_DELETE = os.environ.get("RM_SOFT_DELETE", "false").lower() in (
 )
 
 
-def connect():
+def connect() -> Tuple[RethinkDB, Any]:
     """ Return a RethinkDB object + connection """
     rdb = RethinkDB()
     connection = rdb.connect(

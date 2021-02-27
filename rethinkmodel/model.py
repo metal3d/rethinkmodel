@@ -13,20 +13,22 @@ Each Model has got:
               RethinkModel will filter objects to not get \
               soft deleted objects
 
-.. note::
-
-    When you call :code:`save()` method, the type of each field is checked,
-    transformed and possibles actions are launched. Please take a look on
-    Checkers, Transforms and Actions documentation.
-
 .. code-block::
 
     class User(Model):
-        username: Type[str]
-        tags: List[str]
+        username: Type[str] # a string, cannot be None
+        tags: List[str] # a List if string, connot be None
+        categories: Optional[List[str]] # list of string, can be None
+
+        @classmethod
+        def get_index(cls):
+            ''' Create an index on "name" property '''
+            return ['name']
 
     class Project(Model):
-        owner: Type[User]  # bind an User id here
+        # bind an User id here, because User is a model
+        owner: Type[User]
+
         name: Type[str] # other field
         comment: Optional[str] # optional means that "None" is accepted
 
@@ -35,15 +37,19 @@ To get Linked objects, it's possible to use "join()" method
 
 .. code-block::
 
-    user_id = "..."
-    user = User.join(user_id, Project)
-    # user.projects is set by the Model
+    # The user will be fetched and
+    # projects property is set with all 
+    # related projects.
+    # This is because "Project" object
+    # has got a User reference field.
+    user = User.get(id).join(Project)
 
-You can only set one Model in annotation. But you can set multiple Checkers,
-Transforms and Actions.
+See Model methods documentation to have a look on arguments (like limit, offset, ...)
+
 """
 from datetime import datetime
-from typing import Any, Optional, Type, get_args, get_type_hints
+from typing import (Any, Dict, List, Optional, Type, Union, get_args,
+                    get_type_hints)
 
 from . import db
 from .db import connect
@@ -56,6 +62,33 @@ class BaseModel:  # pylint: disable=too-few-public-methods
     created_at: Optional[datetime]
     deleted_at: Optional[datetime]
     updated_at: Optional[datetime]
+
+    @classmethod
+    def get_index(cls) -> Optional[Union[List, Dict]]:
+        """Override this method to return index list
+
+        You can return index list or a compound index defintiion
+        as explained at https://rethinkdb.com/docs/secondary-indexes/python/
+
+        .. warning::
+
+            It's not fully working, at this time you can only create
+            one or more "simple index" on field name
+
+            The best you can do at this time is to manage indexes outside
+            your model definition, for example by creating a migration script to launch
+            with the :code:`manage` module.
+
+        E.g.
+
+        .. code-block::
+
+            return ['name'] # create an index on "name"
+
+        This methods only work if :code:`manage` module is called to create database
+        and tables.
+        """
+        return None
 
 
 class Model(BaseModel):
@@ -119,6 +152,10 @@ class Model(BaseModel):
         for name, val in data.items():
             if isinstance(val, Model):
                 data[name] = val.id
+            elif isinstance(val, list):
+                data[name] = [
+                    model.id if isinstance(model, Model) else model for model in val
+                ]
 
         # set the id if it exists
         if self.id:
@@ -126,7 +163,7 @@ class Model(BaseModel):
         return data
 
     def save(self) -> Any:
-        """ Insert or update data if self.id is set """
+        """ Insert or update data if self.id is set. Return the save object (self)."""
         now = datetime.astimezone(datetime.now())
         if self.id:
             self.updated_at = now
@@ -165,6 +202,36 @@ class Model(BaseModel):
 
         return cls.__build(result)
 
+    @classmethod
+    def get_all(
+        cls,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        order_by: Optional[Union[Dict, str]] = None,
+    ) -> List[Any]:
+        """ Get collection of results """
+
+        select = {}
+        if db.SOFT_DELETE:
+            select["deleted_at"] = None
+
+        rdb, conn = connect()
+        query = rdb.table(cls.tablename)
+
+        if order_by:
+            query = query.order_by(order_by)
+
+        if offset and offset > 0:
+            query = query.skip(offset)
+
+        if limit and limit > 0:
+            query = query.limit(limit)
+
+        results = query.filter(select).run(conn)
+        conn.close()
+
+        return [cls.__build(u) for u in results]
+
     def delete(self):
         """ Delete this object from DB """
         if db.SOFT_DELETE:
@@ -175,7 +242,7 @@ class Model(BaseModel):
             self.__r.table(self.tablename).get(self.id).delete().run(self.__conn)
 
     @classmethod
-    def delete_id(cls, idx=None):
+    def delete_id(cls, idx=Optional[str]):
         """ Delete the object that is identified by "id" """
 
         if idx is None:
@@ -187,6 +254,14 @@ class Model(BaseModel):
     @classmethod
     def __build(cls, result: dict):
         """ Build the object with nested object if there's Linked attributes """
+
+        for name, kind in get_type_hints(cls).items():
+            models = [m for m in get_args(kind) if issubclass(m, Model)]
+            for model in models:
+                if isinstance(result[name], list):
+                    result[name] = [model.get(modelid) for modelid in result[name]]
+                else:
+                    result[name] = model.get(result[name])
 
         return cls(**result)
 
@@ -200,12 +275,10 @@ class Model(BaseModel):
         rdb, conn = connect()
         results = rdb.table(cls.tablename).filter(select).run(conn)
         conn.close()
-        if hasattr(results, "items") and len(results.items) > 0:
-            return [cls.__build(u) for u in results]
 
-        return []
+        return [cls.__build(u) for u in results]
 
-    def join(self, *models: Type[BaseModel]) -> object:
+    def join(self, *models: Type[BaseModel]) -> Any:
         """ Join linked models to the current model, fetched by id """
         for model in models:
             if not issubclass(model, Model):
@@ -220,6 +293,13 @@ class Model(BaseModel):
                     setattr(self, model.tablename, fields)
 
         return self
+
+    @classmethod
+    def truncate(cls):
+        """ Truncate table, delete everything in the table """
+        rdb, conn = connect()
+        rdb.table(cls.tablename).delete().run(conn)
+        conn.close()
 
     def __del__(self):
         try:
