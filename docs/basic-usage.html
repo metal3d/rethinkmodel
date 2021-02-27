@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Basic usage &#8212; RethinkModel 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage examples" href="tutorials/index.html" />
+    <link rel="prev" title="Installation" href="install.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorials/index.html" title="Usage examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">RethinkModel 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Basic usage</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="basic-usage">
+<h1>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="first-step">
+<h2>First step<a class="headerlink" href="#first-step" title="Permalink to this headline">¶</a></h2>
+<p>At first, you need to configure your database. Be sure that RethinkDB is launched and that you can access the service port.</p>
+<p>By default, RethinkModel will check this environment variables:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">RM_DBNAME</span></code> to set the database to use, default is “test”</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">RM_HOST</span></code> default to “127.0.0.1”</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">RM_PORT</span></code> default to 28015</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">RM_USER</span></code> default to “admin” (the RethinkDB default user)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">RM_PASSWORD</span></code> default to empty string (the RethinkDB default)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">RM_TIMEOUT</span></code> default to 10 (in seconds)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">RM_SOFT_DELETE</span></code> with is <code class="code docutils literal notranslate"><span class="pre">False</span></code> by default</p></li>
+</ul>
+<p>If you want to configure this in python, you can use the <code class="code docutils literal notranslate"><span class="pre">rethinkmodel.config()</span></code> function.</p>
+</div>
+<div class="section" id="create-models">
+<h2>Create models<a class="headerlink" href="#create-models" title="Permalink to this headline">¶</a></h2>
+<p>The basic usage is to create a class with annotations to declare fields to save. For example:</p>
+<p>There are 4 automatic fields comming from <code class="code docutils literal notranslate"><span class="pre">Model</span></code> class:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">id</span></code> is set by RethinkDB</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">created_at</span></code> when you save an object without id (create)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">updated_at</span></code> when you save an object with a given id (update)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">deleted_at</span></code> is set to deleted <code class="code docutils literal notranslate"><span class="pre">datatime</span></code> when you delete the object, and if you set <code class="code docutils literal notranslate"><span class="pre">rethinkmodel.db.SOFT_DELETE</span></code> to <code class="code docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># you must use typing</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">rethinkmodel</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">username</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">password</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">age</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Rethink:Model automatically manages <cite>One to One</cite> and <cite>One to Many</cite> relations. The rule is to add an annotations that is Typed with a Model based class. The above example can help:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="c1"># this will actually store the User.id</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="k">class</span> <span class="nc">Product</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># we can accept None</span>
+    <span class="n">categories</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">owner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">User</span><span class="p">]</span>
+
+    <span class="c1"># this will save a list of User IDs</span>
+    <span class="n">contributors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">User</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>See the <code class="code docutils literal notranslate"><span class="pre">Linked</span></code> documentation part have more details.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Basic usage</a><ul>
+<li><a class="reference internal" href="#first-step">First step</a></li>
+<li><a class="reference internal" href="#create-models">Create models</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="install.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="tutorials/index.html" title="next chapter">Usage examples</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/basic-usage.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+<div class="github">
+    <a href="https://github.com/https://githu.com/metal3d/rethinkmodel">
+        <span>Fork me on GitHub</span>
+        <img src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    </a>
+</div>
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Patrice Ferlet.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.1.
+    </div>
+    
+
+  </body>
+</html>

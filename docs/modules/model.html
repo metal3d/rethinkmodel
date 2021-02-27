@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rethinkmodel.model - Model definition and methods &#8212; RethinkModel 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="rethinkmodel.db - Connection and data management options" href="db.html" />
+    <link rel="prev" title="Modules and Classes refernce" href="index.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="db.html" title="rethinkmodel.db - Connection and data management options"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Modules and Classes refernce"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RethinkModel 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Modules and Classes refernce</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">rethinkmodel.model - Model definition and methods</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-rethinkmodel.model">
+<span id="rethinkmodel-model-model-definition-and-methods"></span><h1>rethinkmodel.model - Model definition and methods<a class="headerlink" href="#module-rethinkmodel.model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-to-create-and-manage-your-models">
+<h2>Module to create and manage your models<a class="headerlink" href="#module-to-create-and-manage-your-models" title="Permalink to this headline">¶</a></h2>
+<p>Each data object <strong>must</strong> inherit from <code class="code docutils literal notranslate"><span class="pre">Model</span></code> class and contains
+some annotations to define the types. Types can be “simples” or “Model” children.</p>
+<p>Each Model has got:</p>
+<ul class="simple">
+<li><p>id: that is set from database (None by default)</p></li>
+<li><p>created_at: the creation date of the data (never changed)</p></li>
+<li><p>updated_at: the modification date, change each time you save the model</p></li>
+<li><p>deleted_at: if you set <code class="code docutils literal notranslate"><span class="pre">rethinkdb.db.SOFT_DELETE</span></code> to <code class="code docutils literal notranslate"><span class="pre">True</span></code> in configuration, so the model is               never deleted but this date is set.               Rethink:Model will filter objects to not get               soft deleted objects</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">username</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># a string, cannot be None</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># a List if string, connot be None</span>
+    <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="c1"># list of string, can be None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_index</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Create an index on &quot;name&quot; property &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+
+<span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c1"># bind an User id here, because User is a model</span>
+    <span class="n">owner</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">User</span><span class="p">]</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># other field</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># Optional =&gt; &quot;None&quot; is accepted</span>
+</pre></div>
+</div>
+<p>To get Linked objects, it’s possible to use “join()” method</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># The user will be fetched and</span>
+<span class="c1"># projects property is set with all </span>
+<span class="c1"># related projects.</span>
+<span class="c1"># This is because &quot;Project&quot; object</span>
+<span class="c1"># has got a User reference field.</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Project</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See Model methods documentation to have a look on arguments (like limit, offset, …)</p>
+<dl class="py class">
+<dt id="rethinkmodel.model.BaseModel">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">rethinkmodel.model.</span></code><code class="sig-name descname"><span class="pre">BaseModel</span></code><a class="reference internal" href="../_modules/rethinkmodel/model.html#BaseModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.BaseModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base Model interface</p>
+<dl class="py method">
+<dt id="rethinkmodel.model.BaseModel.get_index">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_index</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#BaseModel.get_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.BaseModel.get_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override this method to return index list</p>
+<p>You can return index list or a compound index defintiion
+as explained at <a class="reference external" href="https://rethinkdb.com/docs/secondary-indexes/python/">https://rethinkdb.com/docs/secondary-indexes/python/</a></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It’s not fully working, at this time you can only create
+one or more “simple index” on field name</p>
+<p>The best you can do at this time is to manage indexes outside
+your model definition, for example by creating a migration script to launch
+with the <code class="code docutils literal notranslate"><span class="pre">manage</span></code> module.</p>
+</div>
+<p>E.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="c1"># create an index on &quot;name&quot;</span>
+</pre></div>
+</div>
+<p>This methods only work if <code class="code docutils literal notranslate"><span class="pre">manage</span></code> module is called to create database
+and tables.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rethinkmodel.model.Model">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">rethinkmodel.model.</span></code><code class="sig-name descname"><span class="pre">Model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model is the parent class of all tables for RethinkDB</p>
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.delete">
+<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete this object from DB</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.delete_id">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">delete_id</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.delete_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.delete_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the object that is identified by “id”</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.filter">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select object in database with filters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.get">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the correct model object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.get_all">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.get_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get collection of results</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.join">
+<code class="sig-name descname"><span class="pre">join</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Join linked models to the current model, fetched by id</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.save">
+<code class="sig-name descname"><span class="pre">save</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert or update data if self.id is set. Return the save object (self).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.todict">
+<code class="sig-name descname"><span class="pre">todict</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.todict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.todict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dict that can be written in db</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.truncate">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">truncate</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.truncate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.truncate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Truncate table, delete everything in the table</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">rethinkmodel.model - Model definition and methods</a><ul>
+<li><a class="reference internal" href="#module-to-create-and-manage-your-models">Module to create and manage your models</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Modules and Classes refernce</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Modules and Classes refernce</a></li>
+      <li>Next: <a href="db.html" title="next chapter">rethinkmodel.db - Connection and data management options</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/modules/model.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+<div class="github">
+    <a href="https://github.com/https://githu.com/metal3d/rethinkmodel">
+        <span>Fork me on GitHub</span>
+        <img src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    </a>
+</div>
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Patrice Ferlet.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.1.
+    </div>
+    
+
+  </body>
+</html>

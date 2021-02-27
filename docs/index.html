@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to RethinkModel’s documentation! &#8212; RethinkModel 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="install.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    <div class=indexwrapper>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">RethinkModel 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to RethinkModel’s documentation!</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-rethinkmodel-s-documentation">
+<h1>Welcome to RethinkModel’s documentation!<a class="headerlink" href="#welcome-to-rethinkmodel-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-this">
+<h2>What is this ?<a class="headerlink" href="#what-is-this" title="Permalink to this headline">¶</a></h2>
+<p>RethinkModel aims to help you to describe your data as classes to be easilly created, updated and get from <a class="reference external" href="https://www.rethinkdb.com">RethinkDB</a>.</p>
+<p>Rethink:Model make uses of <a class="reference external" href="https://docs.python.org/3/library/typing.html">typing support</a> annotations - Pyton annotations describe the <cite>model</cite> fields. That’s easy, you only have to import the standard <cite>typing</cite> module, and use any of <code class="code docutils literal notranslate"><span class="pre">Optionnal</span></code>, <code class="code docutils literal notranslate"><span class="pre">Type</span></code>, <code class="code docutils literal notranslate"><span class="pre">List</span></code>, <code class="code docutils literal notranslate"><span class="pre">Union</span></code>… types.</p>
+</div>
+<div class="section" id="it-s-simple-as-a-pie">
+<h2>It’s simple as a pie<a class="headerlink" href="#it-s-simple-as-a-pie" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">rethinkdb.model</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">User</span><span class="p">]</span>
+    <span class="n">content</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">login</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">login</span><span class="o">=</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">&quot;me@foo.com&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="n">post</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;This is the post&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-goals">
+<h2>The goals<a class="headerlink" href="#the-goals" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Describe the models in the simplest possible way, but also in the most meaningful way</p></li>
+<li><p>Make use of powerful typing package from Python &gt; 3.7</p></li>
+<li><p>Avoid type checking at runtime (What ?) but let your IDE punish you</p></li>
+</ul>
+<p>Python is not a staticly typed langage. But Python developers want it (or not 😜) - So there are many Python tools that are designed to use typing package which is integrated with Python SDK: Pyright (use by PyLance), MyPy, PyType…</p>
+<p>Your IDE can make type checking.</p>
+<ul class="simple">
+<li><p>Vim can use <a class="reference external" href="https://github.com/fannheyward/coc-pyright">coc-pyright</a></p></li>
+<li><p>VsCode can use <a class="reference external" href="https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance">PyLance</a></p></li>
+<li><p>PyCharm knows how to manage typing</p></li>
+<li><p>etc…</p></li>
+</ul>
+<p>So, let’s use typing ! Rethink:Model is designed to use the typing package.</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic-usage.html">Basic usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basic-usage.html#first-step">First step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic-usage.html#create-models">Create models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Usage examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/blogpost-and-comments.html">Example: blog post and comments</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules and Classes refernce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/model.html">rethinkmodel.model - Model definition and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/db.html">rethinkmodel.db - Connection and data management options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/manage.html">rethinkmodel.manage - Automatic database and table creation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to RethinkModel’s documentation!</a><ul>
+<li><a class="reference internal" href="#what-is-this">What is this ?</a></li>
+<li><a class="reference internal" href="#it-s-simple-as-a-pie">It’s simple as a pie</a></li>
+<li><a class="reference internal" href="#the-goals">The goals</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="install.html" title="next chapter">Installation</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+<div class="github">
+    <a href="https://github.com/https://githu.com/metal3d/rethinkmodel">
+        <span>Fork me on GitHub</span>
+        <img src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    </a>
+</div>
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Patrice Ferlet.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.1.
+    </div>
+    </div>
+
+  </body>
+</html>

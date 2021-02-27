@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Example: blog post and comments &#8212; RethinkModel 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Modules and Classes refernce" href="../modules/index.html" />
+    <link rel="prev" title="Usage examples" href="index.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../modules/index.html" title="Modules and Classes refernce"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Usage examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RethinkModel 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Usage examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Example: blog post and comments</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="example-blog-post-and-comments">
+<h1>Example: blog post and comments<a class="headerlink" href="#example-blog-post-and-comments" title="Permalink to this headline">¶</a></h1>
+<p>Let’s create a simple blog posts databases with comments. You’ll need to create:</p>
+<ul class="simple">
+<li><p>a <cite>Post</cite> model with title, tags and content fields</p></li>
+<li><p>a <cite>Comment</cite> wich is linked to Post</p></li>
+</ul>
+<p>Why to not add a “comments” field inside <cite>Post</cite> Model ? Actually, you can. But there are 3 majors troubles that may happen:</p>
+<ul class="simple">
+<li><p>Create a “comment” means to “update” the post object, and so… you’ll change the “updated_at” value</p></li>
+<li><p>Its possible (but not probable) that you can write a post at the same time as a comment, so one will overwrite the other</p></li>
+<li><p>And, if you’ve got a lot of comments for a post, the post object will be heavy</p></li>
+</ul>
+<p>So, it’s more efficient to link post inside the comments, and not comments inside the posts.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In this case, cascading deletion should <strong>not</strong> be used. Deleting a blog post will not delete children comments. And if you set Cascade attribute to “post” on the comment object, you will <strong>remove the post when a comment is deleted</strong>. Keep in mind that the cascading deletion should <strong>only</strong> be ativate from the parent !</p>
+</div>
+<p>This is the model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">rethinkmodel</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">rethtinkmodel.transforms</span> <span class="kn">import</span> <span class="n">Linked</span>
+<span class="kn">from</span> <span class="nn">rethtinkmodel.checkers</span> <span class="kn">import</span> <span class="n">NonNull</span>
+
+<span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="k">class</span> <span class="nc">Comment</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">content</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">post</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Post</span><span class="p">]</span> <span class="c1"># make the link to Post</span>
+</pre></div>
+</div>
+<p>Now, let’s create a blog post.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">post</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;My first post&quot;</span><span class="p">,</span>
+    <span class="n">content</span><span class="o">=</span><span class="s2">&quot;This is the content&quot;</span><span class="p">,</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="s2">&quot;article&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">post</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In database, you can find the article. The “post.id” field is set (uuid form), and you can use it to add a comments.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">comment</span> <span class="o">=</span> <span class="n">Comment</span><span class="p">(</span>
+    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span>
+    <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Nice post dude&quot;</span><span class="p">,</span>
+    <span class="n">post</span><span class="o">=</span><span class="n">post</span>
+<span class="p">)</span>
+<span class="n">comment</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Inside RethinkDB database the comment object contains the <code class="code docutils literal notranslate"><span class="pre">post.id</span></code> value. But when you will get it, RethinkModel will fetches the <strong>linked object</strong>.
+That means that you can get the title of the article by calling:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">comment</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">title</span>
+</pre></div>
+</div>
+<p>Now, how to get comments from a post ? The easiest method is to use <code class="code docutils literal notranslate"><span class="pre">join()</span></code> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">post</span> <span class="o">=</span> <span class="n">Post</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">post_id</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Comment</span><span class="p">)</span>
+<span class="n">post</span><span class="o">.</span><span class="n">comments</span> <span class="c1"># contains the Comment objects list</span>
+</pre></div>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>The joined attribute is set from the joined tablename as described in your model. If you declared a propoerty with that name, <strong>it will be overwritten</strong> at fetch time. If you save the parent object, so you will write data. It is possible that Rethink:Model will prevent this later.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># If you do this:</span>
+<span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c1">#...</span>
+    <span class="n">comments</span><span class="p">:</span> <span class="n">Any</span>
+
+<span class="c1"># Then</span>
+<span class="n">Post</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">post_id</span><span class="p">)</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">Comment</span><span class="p">)</span>
+<span class="c1"># the post.comments property is reset by the joined data.</span>
+</pre></div>
+</div>
+</div>
+<p>You may also use <code class="code docutils literal notranslate"><span class="pre">filter</span></code> method to get comment list from a post ID:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">comments</span> <span class="o">=</span> <span class="n">Comment</span><span class="o">.</span><span class="n">filter</span><span class="p">({</span>
+    <span class="s2">&quot;post&quot;</span> <span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">id</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>The <code class="code docutils literal notranslate"><span class="pre">comments</span></code> variable is a <code class="code docutils literal notranslate"><span class="pre">list</span></code> that contains comments for the post. The <code class="code docutils literal notranslate"><span class="pre">post</span></code> atribute of the entire comment list will be filled by the corresponding <code class="code docutils literal notranslate"><span class="pre">Post</span></code> object.</p>
+<p>You can update them and use <code class="code docutils literal notranslate"><span class="pre">save</span></code> method as they have got “id”. The :code:”updated_at” attribute will be automatically updated.</p>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.png" alt="Logo"/>
+            </a></p><h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Usage examples</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Usage examples</a></li>
+      <li>Next: <a href="../modules/index.html" title="next chapter">Modules and Classes refernce</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/tutorials/blogpost-and-comments.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+<div class="github">
+    <a href="https://github.com/https://githu.com/metal3d/rethinkmodel">
+        <span>Fork me on GitHub</span>
+        <img src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    </a>
+</div>
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Patrice Ferlet.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.1.
+    </div>
+    
+
+  </body>
+</html>

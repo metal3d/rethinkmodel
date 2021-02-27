@@ -1,0 +1,48 @@
+.py.class {
+  border-top: 1px solid black;
+  margin-top: 1.5em;
+  padding-top: 1em;
+}
+
+div.body {
+  min-width: auto;
+}
+
+div.indexwrapper h1 {
+  background-size: contain;
+}
+
+div.admonition {
+  margin: 20px 0px 30px;
+}
+
+dd div.admonition {
+  padding-left: 2em;
+}
+
+.admonition.note {
+  background-color: #ebf7ff;
+}
+.admonition.warning {
+  background-color: #fff9f6;
+}
+.admonition.danger {
+  background-color: #ff9e9e;
+}
+
+.admonition::before {
+  position: absolute;
+  margin-left: -1.3em;
+  margin-top: -0.9em;
+  font-size: 2em;
+  filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.2));
+}
+.admonition.danger::before {
+  content: "🔥";
+}
+.admonition.warning::before {
+  content: "⚡";
+}
+.admonition.note::before {
+  content: "💡";
+}
