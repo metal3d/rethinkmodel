@@ -11,8 +11,12 @@ build: clean
 
 clean-all: clean-doc
 
+.ONESHELL:
 doc:
 	cd doc && pipenv run make html
+	cd ..
+	rm -rf docs/*
+	cp -ra doc/_build/html/* docs/
 
 clean-doc:
 	cd doc && pipenv run make clean
