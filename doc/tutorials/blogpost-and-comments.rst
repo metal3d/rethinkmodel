@@ -22,27 +22,22 @@ This is the model:
 
 .. code-block::
 
+    from typing import Type, Optional, List
     from rethinkmodel import Model
     from rethtinkmodel.transforms import Linked
     from rethtinkmodel.checkers import NonNull
 
     class Post(Model)
-        title: (str, NonNull)
-        content: str
-        tags: (str, list)
+        title: Type[str]
+        content: Optional[str]
+        tags: List[str]
 
     class Comment(Model)
-        author: (str, NonNull)
-        content: str
-        post: (Post, Linked)
-
-.. note::
-
-    Don't forget to use "Linked" modifier to not write the post inside the comment
-
+        author: Type[str]
+        content: Type[str]
+        post: Type[Post] # make the link to Post
 
 Now, let's create a blog post.
-
 
 .. code-block::
 
@@ -64,12 +59,7 @@ In database, you can find the article. The "post.id" field is set (uuid form), a
     )
     comment.save()
 
-.. note::
-
-    Here, we pass the :code:`post` object to the "post" attribute, but you can pass the :code:`post.id`. RethinkModel will automatically recreate the object.
-
-At this time, in RethinkDB database, the comment object contains the :code:`post.id` value. But when you will get it, RethinkModel will fetch the linked object.
-
+Inside RethinkDB database the comment object contains the :code:`post.id` value. But when you will get it, RethinkModel will fetches the **linked object**.
 That means that you can get the title of the article by calling:
 
 .. code-block::
@@ -85,7 +75,23 @@ Now, how to get comments from a post ? The easiest method is to use :code:`join(
     post.comments # contains the Comment objects list
 
 
-You may also use :code:`filter` method to get them.
+.. danger::
+
+    The joined attribute is set from the joined tablename as described in your model. If you declared a propoerty with that name, **it will be overwritten** at fetch time. If you save the parent object, so you will write data. It is possible that Rethink:Model will prevent this later.
+
+    .. code::
+
+        # If you do this:
+        class Post(Model):
+            #...
+            comments: Any
+
+        # Then
+        Post.get(post_id).Join(Comment)
+        # the post.comments property is reset by the joined data.
+
+
+You may also use :code:`filter` method to get comment list from a post ID:
 
 .. code-block::
 

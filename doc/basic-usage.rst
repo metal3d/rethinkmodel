@@ -18,19 +18,6 @@ By default, RethinkModel will check this environment variables:
 
 If you want to configure this in python, you can use the :code:`rethinkmodel.config()` function.
 
-.. warning::
-
-    If you use the "soft_delete" option, models in database are not deleted but the "deleted_at" will be set to the deletion date. RethinkModel will filter deleted objects. This implies a little loss of performance.
-
-
-.. note::
-
-    TEST ?
-
-.. danger::
-
-    Wow !
-
 Create models
 --------------
 
@@ -45,67 +32,35 @@ There are 4 automatic fields comming from :code:`Model` class:
 
 .. code-block::
 
+    # you must use typing
+    from typing import Type
     from rethinkmodel import Model
 
     class User(Model):
-        username: str
-        password: str
-        age: int
-
-The types will be checked before to be saved in database. If the type is not respected, the :code:`rethinkmodel.exceptions.BadType` error is raised.
-
-There are several types that helps to manage the tables and field.
-
-- :code:`Checkers` defines some operation to check the attributes, for example :code:`rethinkmodel.checkers.NonNull` will check if the attribute is not, it raises `rethinkmodel.checkers.NonNullException` if the attribute is null
-- :code:`Transformers` defines some rules to transform an attribute before save and when you get objects from database. For example :code:`rethinkmodel.transforms.Linked` is made to replace nested object to the object id.
-- :code:`Actions` defines some action to do on specific event, they can be launched on create, update and delete events.
-
-For example:
-
-.. code-block::
-
-    class Project(Model):
-        name: (str, NonNull)
-        owner: (User, Linked)
+        username: Type[str]
+        password: Type[str]
+        age: Type[int]
 
 
-In the above example:
+Rethink:Model automatically manages `One to One` and `One to Many` relations. The rule is to add an annotations that is Typed with a Model based class. The above example can help:
 
-- :code:`name` couldn't be :code:`None`, you need to set a string
-- :code:`owner` will be replaced by the :code:`User.id` field when you'll save the :code:`Project` in database. When you will get it back from database, the :code:`owner` attribute will contain the :code:`User` object.
-
-It's possible to use :code:`list`, for any simple type or Model.
 
 .. code-block::
 
     class Post(Model):
-        title: str
-        author: (User, Linked)
-        tags: list # list of whatever you want
+        title: Type[str]
+        author: Type[User] # this will actually store the User.id
+        tags: List[str]
 
     class Product(Model):
-        name: (str, NonNull)
-        categories: StringList # StringList makes type checking
+        name: Optional[str] # we can accept None
+        categories: List[str]
 
     class Project(Model):
-        name: (str, NonNull)
-        owner: (User, Linked)
+        name: Type[str]
+        owner: Optional[User]
 
         # this will save a list of User IDs
-        contributors: (list, User, Linked)
-
-    # get a post:
-    post = Post.get(post_id)
-    post.author # contains a User object
-
-    # get a project
-    project = Project(project_id)
-    project.owner # contains a User object
-    project.contributors # contain a list of User objects
-
-    # get User with its projects and posts
-    user = User.get(user_id).join(Project, Post)
-    user.projects # contains a list of linked Project objects
-    user.posts # contains a list of linked Post objects
+        contributors: List[User]
 
 See the :code:`Linked` documentation part have more details.

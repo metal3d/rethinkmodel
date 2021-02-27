@@ -9,11 +9,8 @@ Welcome to RethinkModel's documentation!
 
 RethinkModel aims to help you to describe your data as classes to be easilly created, updated and get from RethinkDB_.
 
-.. _RethinkDB: https://www.rethinkdb.com
+Rethink:Model make uses of `typing support`_ annotations - Pyton annotations describe the `model` fields. That's easy, you only have to import the standard `typing` module, and use any of :code:`Optionnal`, :code:`Type`, :code:`List`, :code:`Union`... types.
 
-Rethink:Model make uses of `typing support`_ to define annotations - annotations describe the model fields. That's easy, you only have to import the standard `typing` module, and use any of `Optionnal`, `Type`, `List`, `Union`... types.
-
-.. `typing support`: https://docs.python.org/3/library/typing.html
 
 
 .. toctree::
@@ -22,8 +19,8 @@ Rethink:Model make uses of `typing support`_ to define annotations - annotations
 
    install
    basic-usage
-   modules/index
    tutorials/index
+   modules/index
 
 Indices and tables
 ------------------
@@ -31,3 +28,6 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. _RethinkDB: https://www.rethinkdb.com
+.. _typing support: https://docs.python.org/3/library/typing.html
