@@ -1,4 +1,6 @@
-""" RethinkDB connection manager
+""" 
+RethinkDB connection manager
+============================
 
 It only contains the :code:`connect()` function. It's preferable to use
 the :code:`rethinkmodel.config()` function to set up connection informations

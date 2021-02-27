@@ -1,4 +1,6 @@
-""" Model definition
+"""
+Module to create and manage your models
+=======================================
 
 Each data object **must** inherit from :code:`Model` class and contains
 some annotations to define the types. Types can be "simples" or "Model" children.
@@ -8,9 +10,9 @@ Each Model has got:
 - id: that is set from database (None by default)
 - created_at: the creation date of the data (never changed)
 - updated_at: the modification date, change each time you save the model
-- deleted_at: if you set `soft_delete` in configuration, so the model is \
+- deleted_at: if you set :code:`rethinkdb.db.SOFT_DELETE` to :code:`True` in configuration, so the model is \
               never deleted but this date is set. \
-              RethinkModel will filter objects to not get \
+              Rethink:Model will filter objects to not get \
               soft deleted objects
 
 .. code-block::
@@ -30,7 +32,7 @@ Each Model has got:
         owner: Type[User]
 
         name: Type[str] # other field
-        comment: Optional[str] # optional means that "None" is accepted
+        comment: Optional[str] # Optional => "None" is accepted
 
 
 To get Linked objects, it's possible to use "join()" method
@@ -51,6 +53,9 @@ from datetime import datetime
 from typing import (Any, Dict, List, Optional, Type, Union, get_args,
                     get_type_hints)
 
+from rethinkdb import RethinkDB
+from rethinkdb.net import Query
+
 from . import db
 from .db import connect
 
@@ -59,8 +64,14 @@ class BaseModel:  # pylint: disable=too-few-public-methods
     """ Base Model interface """
 
     id: Optional[str]
+
+    # creation date, set once the object is saved
     created_at: Optional[datetime]
+
+    # set to the current datetime if rethinkdb.db.SOFT_DELETE is set
     deleted_at: Optional[datetime]
+
+    # modified each time the object is saved
     updated_at: Optional[datetime]
 
     @classmethod
@@ -162,7 +173,7 @@ class Model(BaseModel):
             data["id"] = self.id
         return data
 
-    def save(self) -> Any:
+    def save(self) -> "Model":
         """ Insert or update data if self.id is set. Return the save object (self)."""
         now = datetime.astimezone(datetime.now())
         if self.id:
@@ -183,7 +194,7 @@ class Model(BaseModel):
         return self
 
     @classmethod
-    def get(cls, uid: Optional[str]) -> Any:
+    def get(cls, uid: Optional[str]) -> Optional["Model"]:
         """ Return the correct model object """
 
         if db.SOFT_DELETE:
@@ -208,7 +219,7 @@ class Model(BaseModel):
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
-    ) -> List[Any]:
+    ) -> List["Model"]:
         """ Get collection of results """
 
         select = {}
@@ -216,17 +227,7 @@ class Model(BaseModel):
             select["deleted_at"] = None
 
         rdb, conn = connect()
-        query = rdb.table(cls.tablename)
-
-        if order_by:
-            query = query.order_by(order_by)
-
-        if offset and offset > 0:
-            query = query.skip(offset)
-
-        if limit and limit > 0:
-            query = query.limit(limit)
-
+        query = cls.__prepare_query(rdb, limit, offset, order_by)
         results = query.filter(select).run(conn)
         conn.close()
 
@@ -242,7 +243,7 @@ class Model(BaseModel):
             self.__r.table(self.tablename).get(self.id).delete().run(self.__conn)
 
     @classmethod
-    def delete_id(cls, idx=Optional[str]):
+    def delete_id(cls, idx: Optional[str]):
         """ Delete the object that is identified by "id" """
 
         if idx is None:
@@ -266,30 +267,46 @@ class Model(BaseModel):
         return cls(**result)
 
     @classmethod
-    def filter(cls, select: dict = None) -> list:
+    def filter(
+        cls,
+        select: Optional[Dict],
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        order_by: Optional[Union[Dict, str]] = None,
+    ) -> List["Model"]:
         """ Select object in database with filters """
 
         # force not deleted object
         if db.SOFT_DELETE:
             select["deleted_at"] = None
+
         rdb, conn = connect()
-        results = rdb.table(cls.tablename).filter(select).run(conn)
+        query = cls.__prepare_query(rdb, limit, offset, order_by)
+        results = query.filter(select).run(conn)
         conn.close()
 
         return [cls.__build(u) for u in results]
 
-    def join(self, *models: Type[BaseModel]) -> Any:
+    def join(
+        self,
+        *models: Type["Model"],
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        order_by: Optional[Union[Dict, str]] = None,
+    ) -> "Model":
         """ Join linked models to the current model, fetched by id """
         for model in models:
             if not issubclass(model, Model):
                 continue
 
-            # find the right attribute in "self" that is bounded to "model"
+            # find the right attribute in "model" which is bounded to self class
             hints = get_type_hints(model)
             for name, hint in hints.items():
                 args = get_args(hint)
                 if self.__class__ in args:
-                    fields = model.filter({name: self.id})
+                    fields = model.filter(
+                        {name: self.id}, limit=limit, offset=offset, order_by=order_by
+                    )
                     setattr(self, model.tablename, fields)
 
         return self
@@ -306,3 +323,30 @@ class Model(BaseModel):
             self.__conn.close()
         finally:
             pass
+
+    def __dict__(self):
+        return self.todict()
+
+    def __repr__(self):
+        return repr(self.todict())
+
+    @classmethod
+    def __prepare_query(
+        cls,
+        rdb: RethinkDB,
+        limit: Optional[int],
+        offset: Optional[int],
+        order_by: Optional[Union[dict, str]],
+    ) -> Any:
+
+        query = rdb.table(cls.tablename)
+        if order_by:
+            query = query.order_by(order_by)
+
+        if offset and offset > 0:
+            query = query.skip(offset)
+
+        if limit and limit > 0:
+            query = query.limit(limit)
+
+        return query
