@@ -56,7 +56,7 @@ html_logo = "logo.png"
 html_theme_options = {
     "index_logo": "logo.png",
     "index_logo_height": "80px",
-    "github_fork": "https://githu.com/metal3d/rethinkmodel",
+    "github_fork": "metal3d/rethinkmodel",
 }
 html_css_files = ["custom.css"]
 # Add any paths that contain custom static files (such as style sheets) here,
