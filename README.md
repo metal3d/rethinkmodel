@@ -1,5 +1,8 @@
 # Rethink:Model
 
+[![Build Status](https://www.travis-ci.org/metal3d/rethinkmodel.svg?branch=master)](https://www.travis-ci.org/metal3d/rethinkmodel)
+[![codecov](https://codecov.io/gh/metal3d/rethinkmodel/branch/master/graph/badge.svg?token=JCBPHFQSHF)](https://codecov.io/gh/metal3d/rethinkmodel)
+
 Use Python `typing` package and annotation to describe data for RethinkDB.
 
 This package is inspired of what we can do with SQLAlquemy by using a "Model pattern" to describe tables and fields for [RethinkDB](https://www.rethinkdb.com). The main differences are:
