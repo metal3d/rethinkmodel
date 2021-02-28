@@ -10,6 +10,7 @@ pep517 = "*"
 sphinx = "*"
 pylint = "*"
 sphinx-rtd-theme = "*"
+twine = "*"
 
 [packages]
 rethinkdb = "*"
