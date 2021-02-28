@@ -2,7 +2,7 @@
 
 [![Build Status](https://www.travis-ci.org/metal3d/rethinkmodel.svg?branch=master)](https://www.travis-ci.org/metal3d/rethinkmodel)
 [![codecov](https://codecov.io/gh/metal3d/rethinkmodel/branch/master/graph/badge.svg?token=JCBPHFQSHF)](https://codecov.io/gh/metal3d/rethinkmodel)
-[documentation](https://metal3d.github.io/rethinkmodel/)
+[![documentation](https://badgen.net/badge/doc/official/green)](https://metal3d.github.io/rethinkmodel)
 
 Simple and easy to use ORM for [RethinkDB](https://www.rethinkdb.com). Use Python `typing` package and annotations to describe data representation.
 
