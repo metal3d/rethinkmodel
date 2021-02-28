@@ -1,6 +1,7 @@
 """ Some Generic tests """
 # pylint: disable=missing-class-docstring,too-few-public-methods
 
+import logging
 import unittest
 from typing import Optional
 
@@ -10,12 +11,14 @@ from rethinkmodel.model import Model
 
 from . import utils
 
+LOGGER_NAME = "tests"
+
 
 class User(Model):
     name: Optional[str]
 
     @classmethod
-    def get_index(cls):
+    def get_indexes(cls):
         return ["name"]
 
 
@@ -29,6 +32,19 @@ class Matrix(Model):
 
 class LongNameTable(Model):
     __tablename__ = "long"
+
+
+class LogEvent(Model):
+    name: Optional[str]
+
+    def on_created(self):
+        logging.getLogger(LOGGER_NAME).info("event created")
+
+    def on_deleted(self):
+        logging.getLogger(LOGGER_NAME).info("event deleted")
+
+    def on_modified(self):
+        logging.getLogger(LOGGER_NAME).info("event modified")
 
 
 utils.clean("test_generic")
@@ -102,3 +118,19 @@ class GenericTest(unittest.TestCase):
         for i, user in enumerate(limited_users):
             offset = i + 10
             self.assertEqual(user.name, f"User{offset:02d}")
+
+    def test_crud_and_event(self):
+        """ Test create, update, delete and associated events """
+        log = LogEvent(name="Log Object")
+
+        with self.assertLogs(LOGGER_NAME) as logevent:
+            log.save()
+            self.assertTrue("event created" in "".join(logevent.output))
+        with self.assertLogs(LOGGER_NAME) as logevent:
+            log.name = "Log Object is modified"
+            log.save()
+            self.assertTrue("event modified" in "".join(logevent.output))
+        with self.assertLogs(LOGGER_NAME) as logevent:
+            log.delete()
+            self.assertTrue("event deleted" in "".join(logevent.output))
+            self.assertIsNone(log.id)

@@ -1,4 +1,4 @@
-""" 
+"""
 Automatic database initialisation tools
 =======================================
 
@@ -88,7 +88,7 @@ def auto(member: Type[Model]):
     if member.tablename not in tables:
         LOG.info("create table %s", member.tablename)
         rdb.table_create(member.tablename).run(conn)
-        indexes = member.get_index()
+        indexes = member.get_indexes()
         if indexes:
             # TODO: at this time, it's only working with simple index
             for index in indexes:

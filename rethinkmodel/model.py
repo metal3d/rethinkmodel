@@ -10,10 +10,11 @@ Each Model has got:
 - id: that is set from database (None by default)
 - created_at: the creation date of the data (never changed)
 - updated_at: the modification date, change each time you save the model
-- deleted_at: if you set :code:`rethinkdb.db.SOFT_DELETE` to :code:`True` in configuration, so the model is \
-              never deleted but this date is set. \
-              Rethink:Model will filter objects to not get \
-              soft deleted objects
+- deleted_at: if you set :code:`rethinkdb.db.SOFT_DELETE` to :code:`True` \
+        in configuration, so the model is \
+        never deleted but this date is set. \
+        Rethink:Model will filter objects to not get \
+        soft deleted objects
 
 .. code-block::
 
@@ -54,14 +55,17 @@ from typing import (Any, Dict, List, Optional, Type, Union, get_args,
                     get_type_hints)
 
 from rethinkdb import RethinkDB
-from rethinkdb.net import Query
 
 from . import db
 from .db import connect
 
 
 class BaseModel:  # pylint: disable=too-few-public-methods
-    """ Base Model interface """
+    """Base Model interface
+
+    To change the tablename and avoid name generation, you may
+    use :code:`__tablename__` static property.
+    """
 
     id: Optional[str]
 
@@ -74,39 +78,62 @@ class BaseModel:  # pylint: disable=too-few-public-methods
     # modified each time the object is saved
     updated_at: Optional[datetime]
 
-    @classmethod
-    def get_index(cls) -> Optional[Union[List, Dict]]:
-        """Override this method to return index list
+    def on_created(self):
+        """ Called after the object is created in database """
 
-        You can return index list or a compound index defintiion
-        as explained at https://rethinkdb.com/docs/secondary-indexes/python/
+    def on_modified(self):
+        """ Called after the object is modified in database """
+
+    def on_deleted(self):
+        """Called after the object is deleted from database
+
+        .. note::
+
+            self.id is **not** :code:None at this point. It will be set to :code:None
+            after this method is called. This way, you can, for example,
+            manage a cascade deletion.
+
+        """
+
+    @classmethod
+    def get_indexes(cls) -> Optional[Union[List, Dict]]:
+        """You can override this method to return a list of indexes.
+        This method is called by :meth:`rethinkmodel.manage.auto` function to
+        prepare indexes in database.
 
         .. warning::
 
-            It's not fully working, at this time you can only create
-            one or more "simple index" on field name
+            This is a work in progress. At this time, you can only return a list of
+            strings (name of properties to use as index)
 
-            The best you can do at this time is to manage indexes outside
-            your model definition, for example by creating a migration script to launch
-            with the :code:`manage` module.
-
-        E.g.
-
-        .. code-block::
-
-            return ['name'] # create an index on "name"
-
-        This methods only work if :code:`manage` module is called to create database
-        and tables.
         """
         return None
 
 
 class Model(BaseModel):
-    """ Model is the parent class of all tables for RethinkDB """
+    """Model is the parent class of all tables for RethinkDB
+
+    The constructor accepts kwargs with attributes to set.
+
+    For example, if the :code:User class is set like this:
+
+    .. code::
+
+        class User(Model):
+            username: Type[str]
+
+    You may construct the object with:
+
+    .. code::
+
+        user = User(username="John")
+    """
 
     def __init__(self, **kwargs):
-        """ Construct the object with checks on types in annotations """
+        """Construct the object with checks on types in annotations
+
+        :code:kwargs is set to object attributes if they are declared in annotations
+        """
         # we must have ID
         self.id = None  # pylint: disable=invalid-name
 
@@ -133,7 +160,24 @@ class Model(BaseModel):
     @property
     def tablename(cls) -> str:
         """Get the tablename, generated if not provided
-        in __tablename__ attributes"""
+        in __tablename__ attributes
+
+        This method generates a pluralized name.
+
+        - YYY  → YYYs
+        - YYYx → XXXices
+        - YYYy → YYYies
+
+        e.g:
+
+        - gallery  → galleries
+        - matrix   → matrices
+        - foo      → foos
+        - analysis → analysis (no changes)
+
+        :type: string
+
+        """
         try:
             tablename = getattr(cls, "__tablename__").lower()
         except AttributeError:
@@ -185,16 +229,18 @@ class Model(BaseModel):
                 .update(data)
                 .run(self.__conn)
             )
+            self.on_modified()
         else:
             self.created_at = now
             data = self.todict()
             del data["id"]
             res = self.__r.table(self.tablename).insert(data).run(self.__conn)
             self.id = res.get("generated_keys")[0]
+            self.on_created()
         return self
 
     @classmethod
-    def get(cls, uid: Optional[str]) -> Optional["Model"]:
+    def get(cls, uid: str) -> Optional["Model"]:
         """ Return the correct model object """
 
         if db.SOFT_DELETE:
@@ -242,18 +288,19 @@ class Model(BaseModel):
         else:
             self.__r.table(self.tablename).get(self.id).delete().run(self.__conn)
 
+        self.on_deleted()
+        self.id = None
+
     @classmethod
-    def delete_id(cls, idx: Optional[str]):
+    def delete_id(cls, idx: str):
         """ Delete the object that is identified by "id" """
 
-        if idx is None:
-            return
-        data = cls.__build({})
+        data = cls(id=idx)
         data.id = idx
         data.delete()
 
     @classmethod
-    def __build(cls, result: dict):
+    def __build(cls, result: dict) -> "Model":
         """ Build the object with nested object if there's Linked attributes """
 
         for name, kind in get_type_hints(cls).items():
@@ -273,7 +320,7 @@ class Model(BaseModel):
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
-    ) -> List["Model"]:
+    ) -> Union[List["Model"]]:
         """ Select object in database with filters """
 
         # force not deleted object
@@ -350,3 +397,6 @@ class Model(BaseModel):
             query = query.limit(limit)
 
         return query
+
+    def __getattribute__(self, name: str) -> Any:
+        return super().__getattribute__(name)
