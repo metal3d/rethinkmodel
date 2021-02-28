@@ -160,7 +160,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for rethinkmodel.manage</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; </span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Automatic database initialisation tools</span>
 <span class="sd">=======================================</span>
 
@@ -250,7 +250,7 @@
     <span class="k">if</span> <span class="n">member</span><span class="o">.</span><span class="n">tablename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;create table </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">member</span><span class="o">.</span><span class="n">tablename</span><span class="p">)</span>
         <span class="n">rdb</span><span class="o">.</span><span class="n">table_create</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">tablename</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
-        <span class="n">indexes</span> <span class="o">=</span> <span class="n">member</span><span class="o">.</span><span class="n">get_index</span><span class="p">()</span>
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">member</span><span class="o">.</span><span class="n">get_indexes</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">indexes</span><span class="p">:</span>
             <span class="c1"># TODO: at this time, it&#39;s only working with simple index</span>
             <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
