@@ -8,8 +8,8 @@ nose = "*"
 coverage = "*"
 pep517 = "*"
 sphinx = "*"
-flask-sphinx-themes = "*"
 pylint = "*"
+sphinx-rtd-theme = "*"
 
 [packages]
 rethinkdb = "*"

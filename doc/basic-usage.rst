@@ -21,7 +21,7 @@ If you want to configure this in python, you can use the :code:`rethinkmodel.con
 Create models
 --------------
 
-The basic usage is to create a class with annotations to declare fields to save. For example:
+The basic usage is to create a class with annotations to declare fields to save.
 
 There are 4 automatic fields comming from :code:`Model` class:
 

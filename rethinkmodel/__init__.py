@@ -1,16 +1,16 @@
 """ RethinkDB Model base functions.
 
-RethinkModel gives access to models.Model class.
-
-It also proposes the *config* function that must be called **before** any work
-on RethinkDB. If you don't call the *config* function, rethinkmodel will use
-default values to connect "test" ddatabase on localhost:28015.
+Proposes the :code:`config` function that must be called **before** any work on RethinkDB.
+If you don't call the :code:`config` function, rethink:model will use default values to
+connect "test" ddatabase on localhost:28015.
 
 The *config* function will keep connection information inside the
 *rethinkmodel.db* package.
 
-Note: this will probably change in future releases to allow usage of multiple
-databases connections.
+.. note::
+
+    this will probably change in future releases to allow usage of multiple
+    databases connections.
 """
 
 from . import db

@@ -30,6 +30,7 @@ dd div.admonition {
   background-color: #ff9e9e;
 }
 
+/*
 .admonition::before {
   position: absolute;
   margin-left: -1.3em;
@@ -46,3 +47,4 @@ dd div.admonition {
 .admonition.note::before {
   content: "💡";
 }
+*/
