@@ -30,3 +30,8 @@ listen-doc:
 	while true; do
 		inotifywait -e modify -r doc/ rethinkmodel/ | grep -P ".rst|.py|.css" && $(MAKE) clean-doc doc
 	done
+
+
+deploy: build
+	pipenv run python -m twine upload dist/*
+
