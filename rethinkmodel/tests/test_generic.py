@@ -47,6 +47,12 @@ class LogEvent(Model):
         logging.getLogger(LOGGER_NAME).info("event modified")
 
 
+class SimpleType(Model):
+    user: User
+    name: str
+    age: int
+
+
 utils.clean("test_generic")
 
 
@@ -135,3 +141,11 @@ class GenericTest(unittest.TestCase):
             log.delete()
             self.assertTrue("event deleted" in "".join(logevent.output))
             self.assertIsNone(log.id)
+
+    def test_simple_types(self):
+        """ Should work with simple types """
+        user = User(name="simpleuser").save()
+        simple = SimpleType(name="fooname", age=42, user=user)
+        simple.save()
+
+        self.assertIsNotNone(simple.id)

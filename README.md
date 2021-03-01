@@ -16,17 +16,17 @@ Rethink:Model make uses of [typing support](https://docs.python.org/3/library/ty
 ## It's simple as a pie
 
 ```python
-from typing import Optional, Type
+from typing import Optional, List
 from rethinkdb.model import Model
 
 class Post(Model):
-    author: Type[User]  # One to One relation
-    content: Type[str]
-    tags: Optional[List[str]]
+    author: User  # One to One relation to User
+    content: str
+    tags: Optional[List[str]] # use typing, tags can be None
 
 class User(Model):
-    login: Type[str]
-    email: Type[str]
+    login: str
+    email: str
 
 # save
 user = User(login="John", email="me@foo.com").save()

@@ -186,7 +186,7 @@ some annotations to define the types. Types can be “simples” or “Model” 
 <li><p>deleted_at: if you set <code class="code docutils literal notranslate"><span class="pre">rethinkdb.db.SOFT_DELETE</span></code> to <code class="code docutils literal notranslate"><span class="pre">True</span></code>         in configuration, so the model is         never deleted but this date is set.         Rethink:Model will filter objects to not get         soft deleted objects</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="n">username</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># a string, cannot be None</span>
+    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="c1"># a string</span>
     <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># a List if string, connot be None</span>
     <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="c1"># list of string, can be None</span>
 
@@ -197,9 +197,9 @@ some annotations to define the types. Types can be “simples” or “Model” 
 
 <span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="c1"># bind an User id here, because User is a model</span>
-    <span class="n">owner</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">User</span><span class="p">]</span>
+    <span class="n">owner</span><span class="p">:</span> <span class="n">User</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># other field</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="c1"># other field</span>
     <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># Optional =&gt; &quot;None&quot; is accepted</span>
 </pre></div>
 </div>
@@ -265,7 +265,7 @@ manage a cascade deletion.</p>
 <p>The constructor accepts kwargs with attributes to set.</p>
 <p>For example, if the :code:User class is set like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="n">username</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span>
 </pre></div>
 </div>
 <p>You may construct the object with:</p>

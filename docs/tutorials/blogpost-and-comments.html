@@ -186,19 +186,19 @@
 <p>In this case, cascading deletion should <strong>not</strong> be used. Deleting a blog post will not delete children comments. And if you set Cascade attribute to “post” on the comment object, you will <strong>remove the post when a comment is deleted</strong>. Keep in mind that the cascading deletion should <strong>only</strong> be ativate from the parent !</p>
 </div>
 <p>This is the model:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">rethinkmodel</span> <span class="kn">import</span> <span class="n">Model</span>
 <span class="kn">from</span> <span class="nn">rethtinkmodel.transforms</span> <span class="kn">import</span> <span class="n">Linked</span>
 <span class="kn">from</span> <span class="nn">rethtinkmodel.checkers</span> <span class="kn">import</span> <span class="n">NonNull</span>
 
 <span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
-    <span class="n">title</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 
 <span class="k">class</span> <span class="nc">Comment</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
-    <span class="n">author</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">content</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">author</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">post</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Post</span><span class="p">]</span> <span class="c1"># make the link to Post</span>
 </pre></div>
 </div>

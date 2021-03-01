@@ -182,7 +182,7 @@
 <span class="sd">.. code-block::</span>
 
 <span class="sd">    class User(Model):</span>
-<span class="sd">        username: Type[str] # a string, cannot be None</span>
+<span class="sd">        username: str # a string</span>
 <span class="sd">        tags: List[str] # a List if string, connot be None</span>
 <span class="sd">        categories: Optional[List[str]] # list of string, can be None</span>
 
@@ -193,9 +193,9 @@
 
 <span class="sd">    class Project(Model):</span>
 <span class="sd">        # bind an User id here, because User is a model</span>
-<span class="sd">        owner: Type[User]</span>
+<span class="sd">        owner: User</span>
 
-<span class="sd">        name: Type[str] # other field</span>
+<span class="sd">        name: str # other field</span>
 <span class="sd">        comment: Optional[str] # Optional =&gt; &quot;None&quot; is accepted</span>
 
 
@@ -283,7 +283,7 @@
 <span class="sd">    .. code::</span>
 
 <span class="sd">        class User(Model):</span>
-<span class="sd">            username: Type[str]</span>
+<span class="sd">            username: str</span>
 
 <span class="sd">    You may construct the object with:</span>
 

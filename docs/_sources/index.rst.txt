@@ -18,17 +18,17 @@ It's simple as a pie
 
 .. code::
 
-    from typing import Optional, Type
+    from typing import Optional
     from rethinkdb.model import Model
 
     class Post(Model):
-        author: Type[User]
-        content: Type[str]
+        author: User
+        content: str
         tags: Optional[List[str]]
 
     class User(Model):
-        login: Type[str]
-        email: Type[str]
+        login: str
+        email: str
 
     user = User(login="John", email="me@foo.com").save()
     post = Post(author=user, content="This is the post").save()

@@ -19,7 +19,7 @@ Each Model has got:
 .. code-block::
 
     class User(Model):
-        username: Type[str] # a string, cannot be None
+        username: str # a string
         tags: List[str] # a List if string, connot be None
         categories: Optional[List[str]] # list of string, can be None
 
@@ -30,9 +30,9 @@ Each Model has got:
 
     class Project(Model):
         # bind an User id here, because User is a model
-        owner: Type[User]
+        owner: User
 
-        name: Type[str] # other field
+        name: str # other field
         comment: Optional[str] # Optional => "None" is accepted
 
 
@@ -120,7 +120,7 @@ class Model(BaseModel):
     .. code::
 
         class User(Model):
-            username: Type[str]
+            username: str
 
     You may construct the object with:
 

@@ -198,23 +198,23 @@
 <span class="kn">from</span> <span class="nn">rethinkmodel</span> <span class="kn">import</span> <span class="n">Model</span>
 
 <span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="n">username</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">password</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">age</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">password</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span>
 </pre></div>
 </div>
 <p>Rethink:Model automatically manages <cite>One to One</cite> and <cite>One to Many</cite> relations. The rule is to add an annotations that is Typed with a Model based class. The above example can help:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="n">title</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">author</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="c1"># this will actually store the User.id</span>
-    <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">User</span> <span class="c1"># this will actually store the User.id</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="nb">str</span>
 
 <span class="k">class</span> <span class="nc">Product</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="c1"># we can accept None</span>
     <span class="n">categories</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 
 <span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="n">name</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">owner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">User</span><span class="p">]</span>
 
     <span class="c1"># this will save a list of User IDs</span>

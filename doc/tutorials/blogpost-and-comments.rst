@@ -22,19 +22,19 @@ This is the model:
 
 .. code-block::
 
-    from typing import Type, Optional, List
+    from typing import Optional, List
     from rethinkmodel import Model
     from rethtinkmodel.transforms import Linked
     from rethtinkmodel.checkers import NonNull
 
     class Post(Model)
-        title: Type[str]
+        title: str
         content: Optional[str]
         tags: List[str]
 
     class Comment(Model)
-        author: Type[str]
-        content: Type[str]
+        author: str
+        content: str
         post: Type[Post] # make the link to Post
 
 Now, let's create a blog post.

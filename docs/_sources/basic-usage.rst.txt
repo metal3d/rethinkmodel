@@ -37,9 +37,9 @@ There are 4 automatic fields comming from :code:`Model` class:
     from rethinkmodel import Model
 
     class User(Model):
-        username: Type[str]
-        password: Type[str]
-        age: Type[int]
+        username: str
+        password: str
+        age: int
 
 
 Rethink:Model automatically manages `One to One` and `One to Many` relations. The rule is to add an annotations that is Typed with a Model based class. The above example can help:
@@ -48,16 +48,16 @@ Rethink:Model automatically manages `One to One` and `One to Many` relations. Th
 .. code-block::
 
     class Post(Model):
-        title: Type[str]
-        author: Type[User] # this will actually store the User.id
-        tags: List[str]
+        title: str
+        author: User # this will actually store the User.id
+        tags: str
 
     class Product(Model):
         name: Optional[str] # we can accept None
         categories: List[str]
 
     class Project(Model):
-        name: Type[str]
+        name: str
         owner: Optional[User]
 
         # this will save a list of User IDs
