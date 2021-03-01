@@ -54,7 +54,7 @@ from datetime import datetime
 from typing import (Any, Dict, List, Optional, Type, Union, get_args,
                     get_type_hints)
 
-from rethinkdb import RethinkDB
+from rethinkdb import RethinkDB, errors
 
 from . import db
 from .db import connect
@@ -229,12 +229,18 @@ class Model(BaseModel):
                 .update(data)
                 .run(self.__conn)
             )
+            if res.get("errors") != 0:
+                msg = f"An error occured on create in {self.tablename} entry: {res['first_error']}"
+                raise errors.ReqlError(msg)
             self.on_modified()
         else:
             self.created_at = now
             data = self.todict()
             del data["id"]
             res = self.__r.table(self.tablename).insert(data).run(self.__conn)
+            if res.get("errors") != 0:
+                msg = f"An error occured on insert in {self.tablename} entry: {res['first_error']}"
+                raise errors.ReqlError(msg)
             self.id = res.get("generated_keys")[0]
             self.on_created()
         return self
@@ -398,5 +404,7 @@ class Model(BaseModel):
 
         return query
 
+    # pylint: disable=useless-super-delegation
     def __getattribute__(self, name: str) -> Any:
+        """Mainly done to avoid errors in IDE and editors when we want to access model properties"""
         return super().__getattribute__(name)
