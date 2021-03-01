@@ -372,10 +372,7 @@ class Model(BaseModel):
         conn.close()
 
     def __del__(self):
-        try:
-            self.__conn.close()
-        finally:
-            pass
+        self.__conn.close()
 
     def __dict__(self):
         return self.todict()
