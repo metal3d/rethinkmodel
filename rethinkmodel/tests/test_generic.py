@@ -66,7 +66,8 @@ class GenericTest(unittest.TestCase):
 
     def test_todict(self):
         """ Object should be well shaped in dict """
-        user = User(name="Create user")
+        name = "Create user"
+        user = User(name=name)
         check = user.todict()
         self.assertDictEqual(
             check,
@@ -75,7 +76,7 @@ class GenericTest(unittest.TestCase):
                 "created_at": None,
                 "deleted_at": None,
                 "updated_at": None,
-                "name": "Create user",
+                "name": name,
             },
         )
 
