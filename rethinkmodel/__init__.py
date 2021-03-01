@@ -9,13 +9,13 @@ The *config* function will keep connection information inside the
 
 .. note::
 
-    this will probably change in future releases to allow usage of multiple
+    This will probably change in future releases to allow usage of multiple
     databases connections.
 """
 
 from . import db
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 
 def config(  # pylint: disable=too-many-arguments
@@ -30,7 +30,8 @@ def config(  # pylint: disable=too-many-arguments
 ):
     """Configure database connection
 
-    This **must** be called **before** any Model method call !
+    This **must** be called **before** any Model method call **or** use
+    environment variables as described in :mod:`rethinkmodel.db`.
     """
     db.USER = user
     db.PASSWORD = password

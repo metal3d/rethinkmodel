@@ -3,8 +3,15 @@ RethinkDB connection manager
 ============================
 
 It only contains the :code:`connect()` function. It's preferable to use
-the :code:`rethinkmodel.config()` function to set up connection informations
-befor to call :code:`connec()` function.
+the :meth:`rethinkmodel.config()` function to set up connection informations
+before to call :code:`connec()` function, or use environment variables.
+
+- RM_DBNAME
+- RM_PORT
+- RM_HOST
+- RM_USER
+- RM_PASSWORD
+- RM_TIMEOUT
 
 """
 import os
@@ -28,7 +35,11 @@ SOFT_DELETE = os.environ.get("RM_SOFT_DELETE", "false").lower() in (
 
 
 def connect() -> Tuple[RethinkDB, Any]:
-    """ Return a RethinkDB object + connection """
+    """Return a RethinkDB object + connection
+
+    You will usually not need to call this function. Rethink:Model use this
+    function to internally open and close database connection.
+    """
     rdb = RethinkDB()
     connection = rdb.connect(
         host=HOST,

@@ -90,6 +90,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../manage.html">Managing database and tables creation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../basic-usage.html">Basic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Usage examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules and Classes refernce</a><ul class="current">
@@ -179,9 +180,9 @@ tables by introspecting modules. It can be used in Python, or from command line 
 <p>The way to go is th create a python script, named “manage.py” for example, that will do
 the job. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rethinkmodel</span>
-<span class="kn">import</span> <span class="nn">manage</span> <span class="kn">from</span> <span class="nn">rethinkmodel.manage</span>
+<span class="kn">from</span> <span class="nn">rethinkmodel.manage</span> <span class="k">as</span> <span class="n">manage</span> 
 
-<span class="kn">import</span> <span class="n">myproject</span><span class="o">.</span><span class="n">dataModule</span> <span class="c1"># this is your module</span>
+<span class="kn">import</span> <span class="nn">myproject.dataModule</span> <span class="c1"># this is your module</span>
 
 <span class="c1"># you should configure your RethinkDB connection here</span>
 <span class="n">rethinkmodel</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>

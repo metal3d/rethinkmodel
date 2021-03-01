@@ -57,6 +57,7 @@ So, let's use typing ! Rethink:Model is designed to use the typing package.
    :caption: Contents:
 
    install
+   manage
    basic-usage
    tutorials/index
    modules/index

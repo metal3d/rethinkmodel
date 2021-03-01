@@ -6,3 +6,6 @@ cover/*
 **/*.pyc
 doc/_build/*
 doc/_templates/*
+build/*
+dist/*
+rethinkmodel.egg-info/*

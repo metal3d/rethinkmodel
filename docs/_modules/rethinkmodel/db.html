@@ -89,6 +89,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../manage.html">Managing database and tables creation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../basic-usage.html">Basic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Usage examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules and Classes refernce</a></li>
@@ -165,8 +166,15 @@
 <span class="sd">============================</span>
 
 <span class="sd">It only contains the :code:`connect()` function. It&#39;s preferable to use</span>
-<span class="sd">the :code:`rethinkmodel.config()` function to set up connection informations</span>
-<span class="sd">befor to call :code:`connec()` function.</span>
+<span class="sd">the :meth:`rethinkmodel.config()` function to set up connection informations</span>
+<span class="sd">before to call :code:`connec()` function, or use environment variables.</span>
+
+<span class="sd">- RM_DBNAME</span>
+<span class="sd">- RM_PORT</span>
+<span class="sd">- RM_HOST</span>
+<span class="sd">- RM_USER</span>
+<span class="sd">- RM_PASSWORD</span>
+<span class="sd">- RM_TIMEOUT</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -190,7 +198,11 @@
 
 
 <div class="viewcode-block" id="connect"><a class="viewcode-back" href="../../modules/db.html#rethinkmodel.db.connect">[docs]</a><span class="k">def</span> <span class="nf">connect</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">RethinkDB</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Return a RethinkDB object + connection &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return a RethinkDB object + connection</span>
+
+<span class="sd">    You will usually not need to call this function. Rethink:Model use this</span>
+<span class="sd">    function to internally open and close database connection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rdb</span> <span class="o">=</span> <span class="n">RethinkDB</span><span class="p">()</span>
     <span class="n">connection</span> <span class="o">=</span> <span class="n">rdb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="n">HOST</span><span class="p">,</span>

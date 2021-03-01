@@ -11,7 +11,7 @@ the job. For example:
 .. code-block::
 
     import rethinkmodel
-    import manage from rethinkmodel.manage
+    from rethinkmodel.manage as manage 
 
     import myproject.dataModule # this is your module
 
@@ -25,8 +25,6 @@ the job. For example:
     # each "Model" object and create tables.
     # It will also create database
     manage(myproject.dataModule)
-
-
 
 """
 import glob

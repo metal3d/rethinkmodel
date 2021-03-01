@@ -91,6 +91,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../manage.html">Managing database and tables creation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../basic-usage.html">Basic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Usage examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules and Classes refernce</a><ul class="current">
@@ -176,12 +177,22 @@
 <div class="section" id="rethinkdb-connection-manager">
 <h2>RethinkDB connection manager<a class="headerlink" href="#rethinkdb-connection-manager" title="Permalink to this headline">¶</a></h2>
 <p>It only contains the <code class="code docutils literal notranslate"><span class="pre">connect()</span></code> function. It’s preferable to use
-the <code class="code docutils literal notranslate"><span class="pre">rethinkmodel.config()</span></code> function to set up connection informations
-befor to call <code class="code docutils literal notranslate"><span class="pre">connec()</span></code> function.</p>
+the <a class="reference internal" href="index.html#rethinkmodel.config" title="rethinkmodel.config"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rethinkmodel.config()</span></code></a> function to set up connection informations
+before to call <code class="code docutils literal notranslate"><span class="pre">connec()</span></code> function, or use environment variables.</p>
+<ul class="simple">
+<li><p>RM_DBNAME</p></li>
+<li><p>RM_PORT</p></li>
+<li><p>RM_HOST</p></li>
+<li><p>RM_USER</p></li>
+<li><p>RM_PASSWORD</p></li>
+<li><p>RM_TIMEOUT</p></li>
+</ul>
 <dl class="py function">
 <dt id="rethinkmodel.db.connect">
 <code class="sig-prename descclassname"><span class="pre">rethinkmodel.db.</span></code><code class="sig-name descname"><span class="pre">connect</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">rethinkdb.RethinkDB</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/db.html#connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.db.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a RethinkDB object + connection</p>
+<p>You will usually not need to call this function. Rethink:Model use this
+function to internally open and close database connection.</p>
 </dd></dl>
 
 </div>
