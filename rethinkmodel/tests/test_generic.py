@@ -129,18 +129,24 @@ class GenericTest(unittest.TestCase):
     def test_crud_and_event(self):
         """ Test create, update, delete and associated events """
         log = LogEvent(name="Log Object")
+        modified = "Log Object modified"
 
         with self.assertLogs(LOGGER_NAME) as logevent:
             log.save()
             self.assertTrue("event created" in "".join(logevent.output))
         with self.assertLogs(LOGGER_NAME) as logevent:
-            log.name = "Log Object is modified"
+            log.name = modified
             log.save()
             self.assertTrue("event modified" in "".join(logevent.output))
+            log_get = LogEvent.get(log.id)
+            self.assertEqual(log_get.name, modified)
         with self.assertLogs(LOGGER_NAME) as logevent:
+            last_id = log.id
             log.delete()
             self.assertTrue("event deleted" in "".join(logevent.output))
             self.assertIsNone(log.id)
+            log_deleted = LogEvent.get(last_id)
+            self.assertIsNone(log_deleted)
 
     def test_simple_types(self):
         """ Should work with simple types """

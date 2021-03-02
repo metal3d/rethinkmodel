@@ -246,18 +246,20 @@ class Model(BaseModel):
         return self
 
     @classmethod
-    def get(cls, uid: str) -> Optional["Model"]:
+    def get(cls, data_id: Optional[str]) -> Optional["Model"]:
         """ Return the correct model object """
+        if data_id is None:
+            return None
 
         if db.SOFT_DELETE:
             # filter method alreadu manage soft_delete attribute, use it:
-            result = cls.filter({"id": uid})
+            result = cls.filter({"id": data_id})
             if result and len(result) > 0:
                 return result[0]
             return None
 
         rdb, conn = connect()
-        result = rdb.table(cls.tablename).get(uid).run(conn)
+        result = rdb.table(cls.tablename).get(data_id).run(conn)
         conn.close()
 
         if not result:
