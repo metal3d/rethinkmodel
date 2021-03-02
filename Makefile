@@ -1,9 +1,10 @@
 .PHONY:doc
 TEST_FILTER=""
+NOW:=$(shell date +"%Y%m%d-%H%M%S")
 
 test:
 	rm -rf cover && mkdir cover
-	pipenv run nosetests -sv --with-coverage --cover-package=rethinkmodel --cover-xml --cover-html $(TEST_FILTER)
+	pipenv run pytest --cov=rethinkmodel --cov-report=xml:./coverage-reports/coverage-$(NOW).xml -sv 
 
 build: clean
 	pipenv run python -m pep517.build .
