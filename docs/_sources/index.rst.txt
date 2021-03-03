@@ -11,7 +11,12 @@ What is this ?
 
 RethinkModel aims to help you to describe your data as classes to be easilly created, updated and get from RethinkDB_.
 
-Rethink:Model make uses of `typing support`_ annotations - Pyton annotations describe the `model` fields. That's easy, you only have to import the standard `typing` module, and use any of :code:`Optionnal`, :code:`Type`, :code:`List`, :code:`Union`... types.
+Rethink:Model make uses of `typing support`_ annotations - Python annotations describe the `model` fields. That's easy, you only have to import the standard `typing` module, and use any of :code:`Optionnal`, :code:`Type`, :code:`List`, :code:`Union`... types.
+
+.. note::
+
+    Rethink:Model will not fully check your field types, it's designed to trust your IDE and your competences 💪.
+
 
 It's simple as a pie
 --------------------
@@ -32,6 +37,17 @@ It's simple as a pie
 
     user = User(login="John", email="me@foo.com").save()
     post = Post(author=user, content="This is the post").save()
+
+Above example uses simple types, but you can do:
+
+.. code::
+
+    class Post(Model):
+        author: Type[User]
+        content: Type[str]
+        tags: Optional[List[str]]
+
+This way, your IDE will complain if you try to set something else than a :code:`User` in :code:`author`, :code:`None` in content...
 
 The goals
 ---------

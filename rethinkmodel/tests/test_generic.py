@@ -79,9 +79,9 @@ class GenericTest(unittest.TestCase):
             check,
             {
                 "id": None,
-                "created_at": None,
-                "deleted_at": None,
-                "updated_at": None,
+                "created_on": None,
+                "deleted_on": None,
+                "updated_on": None,
                 "name": name,
             },
         )

@@ -3,10 +3,10 @@ langage: python
 python:
   - 3.9
 addons:
-  rethinkdb: 2.3
+  rethinkdb: "2.3"
 
 env:
-  RM_HOST: localhost
+  - RM_HOST="localhost"
 
 install:
   - pip install pipenv
@@ -18,3 +18,4 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r ./coverage-reports/coverage.xml

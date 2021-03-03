@@ -181,9 +181,9 @@ some annotations to define the types. Types can be “simples” or “Model” 
 <p>Each Model has got:</p>
 <ul class="simple">
 <li><p>id: that is set from database (None by default)</p></li>
-<li><p>created_at: the creation date of the data (never changed)</p></li>
-<li><p>updated_at: the modification date, change each time you save the model</p></li>
-<li><p>deleted_at: if you set <code class="code docutils literal notranslate"><span class="pre">rethinkdb.db.SOFT_DELETE</span></code> to <code class="code docutils literal notranslate"><span class="pre">True</span></code>         in configuration, so the model is         never deleted but this date is set.         Rethink:Model will filter objects to not get         soft deleted objects</p></li>
+<li><p>created_on: the creation date of the data (never changed)</p></li>
+<li><p>updated_on: the modification date, change each time you save the model</p></li>
+<li><p>deleted_on: if you set <code class="code docutils literal notranslate"><span class="pre">rethinkdb.db.SOFT_DELETE</span></code> to <code class="code docutils literal notranslate"><span class="pre">True</span></code>         in configuration, so the model is         never deleted but this date is set.         Rethink:Model will filter objects to not get         soft deleted objects</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="c1"># a string</span>
@@ -244,7 +244,7 @@ strings (name of properties to use as index)</p>
 <dd><p>Called after the object is deleted from database</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>self.id is <strong>not</strong> :code:None at this point. It will be set to :code:None
+<p>self.id is <strong>not</strong> <code class="code docutils literal notranslate"><span class="pre">None</span></code> at this point. It will be set to <code class="code docutils literal notranslate"><span class="pre">None</span></code>
 after this method is called. This way, you can, for example,
 manage a cascade deletion.</p>
 </div>
@@ -263,7 +263,7 @@ manage a cascade deletion.</p>
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">rethinkmodel.model.</span></code><code class="sig-name descname"><span class="pre">Model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model is the parent class of all tables for RethinkDB</p>
 <p>The constructor accepts kwargs with attributes to set.</p>
-<p>For example, if the :code:User class is set like this:</p>
+<p>For example, if the <code class="code docutils literal notranslate"><span class="pre">User</span></code> class is set like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">username</span><span class="p">:</span> <span class="nb">str</span>
 </pre></div>
@@ -292,7 +292,7 @@ manage a cascade deletion.</p>
 
 <dl class="py method">
 <dt id="rethinkmodel.model.Model.get">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.get" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the correct model object</p>
 </dd></dl>
 

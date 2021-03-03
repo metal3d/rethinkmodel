@@ -102,4 +102,4 @@ You may also use :code:`filter` method to get comment list from a post ID:
 
 The :code:`comments` variable is a :code:`list` that contains comments for the post. The :code:`post` atribute of the entire comment list will be filled by the corresponding :code:`Post` object.
 
-You can update them and use :code:`save` method as they have got "id". The :code:"updated_at" attribute will be automatically updated.
+You can update them and use :code:`save` method as they have got "id". The :code:`updated_at` attribute will be automatically updated.

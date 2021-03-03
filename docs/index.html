@@ -166,7 +166,11 @@
 <div class="section" id="what-is-this">
 <h2>What is this ?<a class="headerlink" href="#what-is-this" title="Permalink to this headline">¶</a></h2>
 <p>RethinkModel aims to help you to describe your data as classes to be easilly created, updated and get from <a class="reference external" href="https://www.rethinkdb.com">RethinkDB</a>.</p>
-<p>Rethink:Model make uses of <a class="reference external" href="https://docs.python.org/3/library/typing.html">typing support</a> annotations - Pyton annotations describe the <cite>model</cite> fields. That’s easy, you only have to import the standard <cite>typing</cite> module, and use any of <code class="code docutils literal notranslate"><span class="pre">Optionnal</span></code>, <code class="code docutils literal notranslate"><span class="pre">Type</span></code>, <code class="code docutils literal notranslate"><span class="pre">List</span></code>, <code class="code docutils literal notranslate"><span class="pre">Union</span></code>… types.</p>
+<p>Rethink:Model make uses of <a class="reference external" href="https://docs.python.org/3/library/typing.html">typing support</a> annotations - Python annotations describe the <cite>model</cite> fields. That’s easy, you only have to import the standard <cite>typing</cite> module, and use any of <code class="code docutils literal notranslate"><span class="pre">Optionnal</span></code>, <code class="code docutils literal notranslate"><span class="pre">Type</span></code>, <code class="code docutils literal notranslate"><span class="pre">List</span></code>, <code class="code docutils literal notranslate"><span class="pre">Union</span></code>… types.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Rethink:Model will not fully check your field types, it’s designed to trust your IDE and your competences 💪.</p>
+</div>
 </div>
 <div class="section" id="it-s-simple-as-a-pie">
 <h2>It’s simple as a pie<a class="headerlink" href="#it-s-simple-as-a-pie" title="Permalink to this headline">¶</a></h2>
@@ -186,6 +190,14 @@
 <span class="n">post</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;This is the post&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>Above example uses simple types, but you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">User</span><span class="p">]</span>
+    <span class="n">content</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>This way, your IDE will complain if you try to set something else than a <code class="code docutils literal notranslate"><span class="pre">User</span></code> in <code class="code docutils literal notranslate"><span class="pre">author</span></code>, <code class="code docutils literal notranslate"><span class="pre">None</span></code> in content…</p>
 </div>
 <div class="section" id="the-goals">
 <h2>The goals<a class="headerlink" href="#the-goals" title="Permalink to this headline">¶</a></h2>

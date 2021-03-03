@@ -1,7 +1,7 @@
 Installation
 ============
 
-You can install RethinkModel package with traditional manager like :code:`pip`, :code:`easy_install` or the prefered method :code:`pipenv`. RethinkModel can of course be install in a virtualenv.
+You can install RethinkModel package with traditional manager like :code:`pip`, :code:`easy_install` or the prefered method :code:`pipenv`. Rethink:Model can of course be install in a virtualenv.
 
 .. code-block::
 

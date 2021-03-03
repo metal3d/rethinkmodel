@@ -68,3 +68,14 @@ html_css_files = ["custom.css"]
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 github_url = "metal3d/rethinkmodel"
+
+
+latex_engine = "xelatex"
+latex_elements = {
+    "preamble": r"""
+\usepackage[utf8]{inputenc}
+\usepackage{fontspec}
+\setmainfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}
+""",
+}

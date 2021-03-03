@@ -8,9 +8,9 @@ some annotations to define the types. Types can be "simples" or "Model" children
 Each Model has got:
 
 - id: that is set from database (None by default)
-- created_at: the creation date of the data (never changed)
-- updated_at: the modification date, change each time you save the model
-- deleted_at: if you set :code:`rethinkdb.db.SOFT_DELETE` to :code:`True` \
+- created_on: the creation date of the data (never changed)
+- updated_on: the modification date, change each time you save the model
+- deleted_on: if you set :code:`rethinkdb.db.SOFT_DELETE` to :code:`True` \
         in configuration, so the model is \
         never deleted but this date is set. \
         Rethink:Model will filter objects to not get \
@@ -70,13 +70,13 @@ class BaseModel:  # pylint: disable=too-few-public-methods
     id: Optional[str]
 
     # creation date, set once the object is saved
-    created_at: Optional[datetime]
+    created_on: Optional[datetime]
 
     # set to the current datetime if rethinkdb.db.SOFT_DELETE is set
-    deleted_at: Optional[datetime]
+    deleted_on: Optional[datetime]
 
     # modified each time the object is saved
-    updated_at: Optional[datetime]
+    updated_on: Optional[datetime]
 
     def on_created(self):
         """ Called after the object is created in database """
@@ -89,7 +89,7 @@ class BaseModel:  # pylint: disable=too-few-public-methods
 
         .. note::
 
-            self.id is **not** :code:None at this point. It will be set to :code:None
+            self.id is **not** :code:`None` at this point. It will be set to :code:`None`
             after this method is called. This way, you can, for example,
             manage a cascade deletion.
 
@@ -115,7 +115,7 @@ class Model(BaseModel):
 
     The constructor accepts kwargs with attributes to set.
 
-    For example, if the :code:User class is set like this:
+    For example, if the :code:`User` class is set like this:
 
     .. code::
 
@@ -141,9 +141,9 @@ class Model(BaseModel):
         self.__r, self.__conn = connect()
 
         # default properties
-        self.created_at = None
-        self.updated_at = None
-        self.deleted_at = None
+        self.created_on = None
+        self.updated_on = None
+        self.deleted_on = None
 
         annotations = get_type_hints(self.__class__).keys()
 
@@ -221,7 +221,7 @@ class Model(BaseModel):
         """ Insert or update data if self.id is set. Return the save object (self)."""
         now = datetime.astimezone(datetime.now())
         if self.id:
-            self.updated_at = now
+            self.updated_on = now
             data = self.todict()
             res = (
                 self.__r.table(self.tablename)
@@ -234,7 +234,7 @@ class Model(BaseModel):
                 raise errors.ReqlError(msg)
             self.on_modified()
         else:
-            self.created_at = now
+            self.created_on = now
             data = self.todict()
             del data["id"]
             res = self.__r.table(self.tablename).insert(data).run(self.__conn)
@@ -278,7 +278,7 @@ class Model(BaseModel):
 
         select = {}
         if db.SOFT_DELETE:
-            select["deleted_at"] = None
+            select["deleted_on"] = None
 
         rdb, conn = connect()
         query = cls.__prepare_query(rdb, limit, offset, order_by)
@@ -291,7 +291,7 @@ class Model(BaseModel):
         """ Delete this object from DB """
         if db.SOFT_DELETE:
             self.__r.table(self.tablename).get(self.id).update(
-                {"deleted_at": datetime.astimezone(datetime.now())}
+                {"deleted_on": datetime.astimezone(datetime.now())}
             ).run(self.__conn)
         else:
             self.__r.table(self.tablename).get(self.id).delete().run(self.__conn)
@@ -333,7 +333,7 @@ class Model(BaseModel):
 
         # force not deleted object
         if db.SOFT_DELETE:
-            select["deleted_at"] = None
+            select["deleted_on"] = None
 
         rdb, conn = connect()
         query = cls.__prepare_query(rdb, limit, offset, order_by)

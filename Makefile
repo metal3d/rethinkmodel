@@ -7,7 +7,7 @@ test:
 ifeq ($(TEST_HTML_REPORT), 1)
 	pipenv run pytest --cov=rethinkmodel --cov-report=html:./coverage -sv $(TEST_FILTER)
 else
-	pipenv run pytest --cov=rethinkmodel --cov-report=xml:./coverage-reports/coverage-$(NOW).xml -sv 
+	pipenv run pytest --cov=rethinkmodel --cov-report=xml:./coverage-reports/coverage.xml -v 
 endif
 
 build: clean
@@ -21,6 +21,12 @@ doc:
 	cd ..
 	rm -rf docs/*
 	cp -ra doc/_build/html/* docs/
+
+.ONESHELL:
+pdf-doc:
+	cd doc && pipenv run make latex
+	cd _build/latex && make; make
+
 
 clean-doc:
 	cd doc && pipenv run make clean

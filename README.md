@@ -11,7 +11,7 @@ RethinkModel aims to help you to describe your data as classes to be
 easilly created, updated and get from
 [RethinkDB](https://www.rethinkdb.com).
 
-Rethink:Model make uses of [typing support](https://docs.python.org/3/library/typing.html) annotations - Pyton annotations describe the model fields. That's easy, you only have to import the standard `typing` module, and use any of `Optionnal`, `Type`, `List`, `Union`... types.
+Rethink:Model make uses of [typing support](https://docs.python.org/3/library/typing.html) annotations - Python annotations describe the model fields. That's easy, you only have to import the standard `typing` module, and use any of `Optionnal`, `Type`, `List`, `Union`... types.
 
 ## It's simple as a pie
 
@@ -42,8 +42,9 @@ post = Post.get(post.id)
 # get post from User ?
 user = User.get(user.id).join(Project)
 # user.projects is now filled
-
 ```
+
+There are **other methods** like `join()`, `get_all()` and so on. Please check documentation. 
 
 ## The goals
 

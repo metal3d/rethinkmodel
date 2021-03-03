@@ -5,7 +5,7 @@ You will need to create your database and tables before to use the module. Rethi
 
 .. note::
 
-    Because the :code:manage module will import your package, we **strongly** recommend to declare your models in a separated module where there is no code to execute.
+    Because the :code:`manage` module will import your package, we **strongly** recommend to declare your models in a separated module where there is no code to execute.
 
 Python way
 ----------
