@@ -2,7 +2,7 @@
 
 [![Build Status](https://www.travis-ci.org/metal3d/rethinkmodel.svg?branch=master)](https://www.travis-ci.org/metal3d/rethinkmodel)
 [![codecov](https://codecov.io/gh/metal3d/rethinkmodel/branch/master/graph/badge.svg?token=JCBPHFQSHF)](https://codecov.io/gh/metal3d/rethinkmodel)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=metal3d_rethinkmodel&metric=alert_status)](https://sonarcloud.io/dashboard?id=metal3d_rethinkmodel)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b77295a282c54d48bc1a6ccfea7020ad)](https://www.codacy.com/gh/metal3d/rethinkmodel/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=metal3d/rethinkmodel&amp;utm_campaign=Badge_Grade)
 [![documentation](https://badgen.net/badge/doc/official/green)](https://metal3d.github.io/rethinkmodel)
 
 Simple and easy to use ORM for [RethinkDB](https://www.rethinkdb.com). Use Python `typing` package and annotations to describe data representation.
