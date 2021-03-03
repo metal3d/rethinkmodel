@@ -155,3 +155,8 @@ class GenericTest(unittest.TestCase):
         simple.save()
 
         self.assertIsNotNone(simple.id)
+
+    def test_get_none(self):
+        """ Get None should not raise exception and return None """
+        user = User.get(None)
+        self.assertIsNone(user)
