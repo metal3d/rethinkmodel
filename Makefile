@@ -1,14 +1,17 @@
 .PHONY:doc
 TEST_FILTER=""
 NOW:=$(shell date +"%Y%m%d-%H%M%S")
+TEST_HTML_REPORT=0
 
 test:
-	rm -rf cover && mkdir cover
+ifeq ($(TEST_HTML_REPORT), 1)
+	pipenv run pytest --cov=rethinkmodel --cov-report=html:./coverage -sv $(TEST_FILTER)
+else
 	pipenv run pytest --cov=rethinkmodel --cov-report=xml:./coverage-reports/coverage-$(NOW).xml -sv 
+endif
 
 build: clean
 	pipenv run python -m pep517.build .
-
 
 clean-all: clean-doc
 
@@ -23,7 +26,7 @@ clean-doc:
 	cd doc && pipenv run make clean
 
 clean:
-	rm -rf cover .coverage build dist *.egg-info
+	rm -rf build dist *.egg-info
 
 .ONESHELL:
 listen-doc:
@@ -32,7 +35,5 @@ listen-doc:
 		inotifywait -e modify -r doc/ rethinkmodel/ | grep -P ".rst|.py|.css" && $(MAKE) clean-doc doc
 	done
 
-
 deploy: build
 	pipenv run python -m twine upload dist/*
-
