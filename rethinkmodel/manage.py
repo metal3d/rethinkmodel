@@ -115,12 +115,10 @@ def introspect(modpath: str):
     name = os.path.basename(modpath)
     name = name.replace(".py", "")
 
-    try:
-        spec = importlib.util.spec_from_file_location(name, modpath)
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.load_module(mod.__name__)
-    except ImportError:
-        return
+    spec = importlib.util.spec_from_file_location(name, modpath)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.load_module(mod.__name__)
+    spec.loader.exec_module(mod)
 
     manage(mod)
 
