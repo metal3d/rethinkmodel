@@ -410,7 +410,7 @@
 
 <div class="viewcode-block" id="Model.get"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.Model.get">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Model&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return the correct model object.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return a Model object fetched from database for the giver ID.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">data_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -491,7 +491,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;Model&quot;</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Select object in database with filters.</span>
 
-<span class="sd">        The :code:`select` argument can take a :code:`dict` or a callable where</span>
+<span class="sd">        The :code:`select` argument can take a :code:`dict` or a :code:`Callable` where</span>
 <span class="sd">        RethinkDB row is accessible.</span>
 
 <span class="sd">        .. code::</span>
@@ -508,7 +508,7 @@
 <span class="sd">                select=lambda res: res[&quot;name&quot;].eq(&quot;user0&quot;).or_(res[&quot;name&quot;].eq(&quot;user2&quot;)),</span>
 <span class="sd">            )</span>
 
-<span class="sd">            See: https://rethinkdb.com/api/python/filter/</span>
+<span class="sd">        See: https://rethinkdb.com/api/python/filter/</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># force not deleted object</span>
         <span class="n">first_filter</span> <span class="o">=</span> <span class="p">{}</span>
