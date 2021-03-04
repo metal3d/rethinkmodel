@@ -161,7 +161,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for rethinkmodel.db</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;RethinkDB connection manager</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">RethinkDB connection manager</span>
+<span class="sd">============================</span>
 
 <span class="sd">It only contains the :code:`connect()` function. It&#39;s preferable to use</span>
 <span class="sd">the :meth:`rethinkmodel.config()` function to set up connection informations</span>
@@ -196,10 +198,10 @@
 
 
 <div class="viewcode-block" id="connect"><a class="viewcode-back" href="../../modules/db.html#rethinkmodel.db.connect">[docs]</a><span class="k">def</span> <span class="nf">connect</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">RethinkDB</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Return a RethinkDB object + connection</span>
+    <span class="sd">&quot;&quot;&quot;Return a RethinkDB object + connection.</span>
 
-<span class="sd">    You will usually not need to call this function. Rethink:Model use this</span>
-<span class="sd">    function to internally open and close database connection.</span>
+<span class="sd">    You will usually not need to call this function. Rethink:Model use</span>
+<span class="sd">    this function to internally open and close database connection.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rdb</span> <span class="o">=</span> <span class="n">RethinkDB</span><span class="p">()</span>
     <span class="n">connection</span> <span class="o">=</span> <span class="n">rdb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>

@@ -1,4 +1,4 @@
-"""Test manage module"""
+"""Test manage module."""
 # pylint disable=missing-class-docstring,too-few-public-methods
 
 import unittest
@@ -23,7 +23,7 @@ class ManageTest(unittest.TestCase):
         return super().setUp()
 
     def test_introspect(self):
-        """ Test the module introspection from path """
+        """Test the module introspection from path."""
         introspect(__file__)
         rdb, conn = connect()
         tables = rdb.db(db.DB_NAME).table_list().run(conn)

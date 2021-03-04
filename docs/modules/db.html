@@ -95,8 +95,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../basic-usage.html">Basic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Usage examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules and Classes refernce</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#rethinkdb-model-base-functions">RethinkDB Model base functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="model.html">rethinkmodel.model - Model definition and methods</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.db - Connection and data management options</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.db - Connection and data management options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rethinkdb-connection-manager">RethinkDB connection manager</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="manage.html">rethinkmodel.manage - Automatic database and table creation</a></li>
 </ul>
 </li>
@@ -171,7 +175,8 @@
             
   <div class="section" id="module-rethinkmodel.db">
 <span id="rethinkmodel-db-connection-and-data-management-options"></span><h1>rethinkmodel.db - Connection and data management options<a class="headerlink" href="#module-rethinkmodel.db" title="Permalink to this headline">¶</a></h1>
-<p>RethinkDB connection manager</p>
+<div class="section" id="rethinkdb-connection-manager">
+<h2>RethinkDB connection manager<a class="headerlink" href="#rethinkdb-connection-manager" title="Permalink to this headline">¶</a></h2>
 <p>It only contains the <code class="code docutils literal notranslate"><span class="pre">connect()</span></code> function. It’s preferable to use
 the <a class="reference internal" href="index.html#rethinkmodel.config" title="rethinkmodel.config"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rethinkmodel.config()</span></code></a> function to set up connection informations
 before to call <code class="code docutils literal notranslate"><span class="pre">connec()</span></code> function, or use environment variables.</p>
@@ -186,11 +191,12 @@ before to call <code class="code docutils literal notranslate"><span class="pre"
 <dl class="py function">
 <dt id="rethinkmodel.db.connect">
 <code class="sig-prename descclassname"><span class="pre">rethinkmodel.db.</span></code><code class="sig-name descname"><span class="pre">connect</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">rethinkdb.RethinkDB</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/db.html#connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.db.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a RethinkDB object + connection</p>
-<p>You will usually not need to call this function. Rethink:Model use this
-function to internally open and close database connection.</p>
+<dd><p>Return a RethinkDB object + connection.</p>
+<p>You will usually not need to call this function. Rethink:Model use
+this function to internally open and close database connection.</p>
 </dd></dl>
 
+</div>
 </div>
 
 

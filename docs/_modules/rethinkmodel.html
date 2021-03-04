@@ -159,7 +159,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for rethinkmodel</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;RethinkDB Model base functions.</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">RethinkDB Model base functions</span>
+<span class="sd">==============================</span>
 
 <span class="sd">Proposes the :code:`config` function that must be called **before** any work on RethinkDB.</span>
 <span class="sd">If you don&#39;t call the :code:`config` function, rethink:model will use default values to</span>
@@ -189,7 +191,7 @@
     <span class="n">ssl</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">SSL</span><span class="p">,</span>
     <span class="n">soft_delete</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">SOFT_DELETE</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Configure database connection</span>
+    <span class="sd">&quot;&quot;&quot;Configure database connection.</span>
 
 <span class="sd">    This **must** be called **before** any Model method call **or** use</span>
 <span class="sd">    environment variables as described in :mod:`rethinkmodel.db`.</span>

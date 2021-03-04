@@ -1,4 +1,4 @@
-"""Some Generic tests"""
+"""Some Generic tests."""
 # pylint: disable=missing-class-docstring,too-few-public-methods
 
 import logging
@@ -63,7 +63,7 @@ class GenericTest(unittest.TestCase):
         return super().setUp()
 
     def test_generate_tablename(self):
-        """ Check if automatic name is OK """
+        """Check if automatic name is OK."""
 
         self.assertEqual(User.tablename, "users")
         self.assertEqual(Gallery.tablename, "galleries")
@@ -71,7 +71,7 @@ class GenericTest(unittest.TestCase):
         self.assertEqual(LongNameTable.tablename, "long")
 
     def test_todict(self):
-        """ Object should be well shaped in dict """
+        """Object should be well shaped in dict."""
         name = "Create user"
         user = User(name=name)
         check = user.todict()
@@ -87,14 +87,14 @@ class GenericTest(unittest.TestCase):
         )
 
     def test_create(self):
-        """ Try to inject data in database """
+        """Try to inject data in database."""
 
         user = User(name="Create user")
         user.save()
         self.assertIsNotNone(user.id)
 
     def test_filter(self):
-        """ Test filtering data """
+        """Test filtering data."""
         user = User(name="Filtered")
         user.save()
 
@@ -104,12 +104,12 @@ class GenericTest(unittest.TestCase):
         self.assertEqual(filtered[0].name, user.name)
 
     def test_attribute_error(self):
-        """ Check if badly named attribute raises exception """
+        """Check if badly named attribute raises exception."""
         with self.assertRaises(AttributeError):
             _ = User(foo="bar")
 
     def test_get_all(self):
-        """ Test getting all object with or whithout limit """
+        """Test getting all object with or whithout limit."""
         User.truncate()
 
         # build 30 users
@@ -127,7 +127,7 @@ class GenericTest(unittest.TestCase):
             self.assertEqual(user.name, f"User{offset:02d}")
 
     def test_crud_and_event(self):
-        """ Test create, update, delete and associated events """
+        """Test create, update, delete and associated events."""
         log = LogEvent(name="Log Object")
         modified = "Log Object modified"
 
@@ -149,7 +149,7 @@ class GenericTest(unittest.TestCase):
             self.assertIsNone(log_deleted)
 
     def test_simple_types(self):
-        """ Should work with simple types """
+        """Should work with simple types."""
         user = User(name="simpleuser").save()
         simple = SimpleType(name="fooname", age=42, user=user)
         simple.save()
@@ -157,6 +157,6 @@ class GenericTest(unittest.TestCase):
         self.assertIsNotNone(simple.id)
 
     def test_get_none(self):
-        """ Get None should not raise exception and return None """
+        """Get None should not raise exception and return None."""
         user = User.get(None)
         self.assertIsNone(user)

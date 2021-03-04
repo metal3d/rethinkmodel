@@ -1,4 +1,6 @@
-"""RethinkDB Model base functions.
+"""
+RethinkDB Model base functions
+==============================
 
 Proposes the :code:`config` function that must be called **before** any work on RethinkDB.
 If you don't call the :code:`config` function, rethink:model will use default values to
@@ -28,7 +30,7 @@ def config(  # pylint: disable=too-many-arguments
     ssl: dict = db.SSL,
     soft_delete=db.SOFT_DELETE,
 ):
-    """Configure database connection
+    """Configure database connection.
 
     This **must** be called **before** any Model method call **or** use
     environment variables as described in :mod:`rethinkmodel.db`.

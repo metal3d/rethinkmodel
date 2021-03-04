@@ -1,4 +1,6 @@
-"""Module to create and manage your models
+"""
+Module to create and manage your models
+=======================================
 
 Each data object **must** inherit from :code:`Model` class and contains
 some annotations to define the types. Types can be "simples" or "Model" children.
@@ -39,7 +41,7 @@ To get Linked objects, it's possible to use "join()" method
 .. code-block::
 
     # The user will be fetched and
-    # projects property is set with all 
+    # projects property is set with all
     # related projects.
     # This is because "Project" object
     # has got a User reference field.
@@ -59,10 +61,10 @@ from .db import connect
 
 
 class BaseModel:  # pylint: disable=too-few-public-methods
-    """Base Model interface
+    """Base Model interface.
 
-    To change the tablename and avoid name generation, you may
-    use :code:`__tablename__` static property.
+    To change the tablename and avoid name generation, you may use
+    :code:`__tablename__` static property.
     """
 
     id: Optional[str]
@@ -77,39 +79,37 @@ class BaseModel:  # pylint: disable=too-few-public-methods
     updated_on: Optional[datetime]
 
     def on_created(self):
-        """Called after the object is created in database"""
+        """Called after the object is created in database."""
 
     def on_modified(self):
-        """Called after the object is modified in database"""
+        """Called after the object is modified in database."""
 
     def on_deleted(self):
-        """Called after the object is deleted from database
+        """Called after the object is deleted from database.
 
         .. note::
 
             self.id is **not** :code:`None` at this point. It will be set to :code:`None`
             after this method is called. This way, you can, for example,
             manage a cascade deletion.
-
         """
 
     @classmethod
     def get_indexes(cls) -> Optional[Union[List, Dict]]:
-        """You can override this method to return a list of indexes.
-        This method is called by :meth:`rethinkmodel.manage.auto` function to
+        """You can override this method to return a list of indexes. This
+        method is called by :meth:`rethinkmodel.manage.auto` function to
         prepare indexes in database.
 
         .. warning::
 
             This is a work in progress. At this time, you can only return a list of
             strings (name of properties to use as index)
-
         """
         return None
 
 
 class Model(BaseModel):
-    """Model is the parent class of all tables for RethinkDB
+    """Model is the parent class of all tables for RethinkDB.
 
     The constructor accepts kwargs with attributes to set.
 
@@ -128,7 +128,7 @@ class Model(BaseModel):
     """
 
     def __init__(self, **kwargs):
-        """Construct the object with checks on types in annotations
+        """Construct the object with checks on types in annotations.
 
         :code:kwargs is set to object attributes if they are declared in annotations
         """
@@ -157,8 +157,8 @@ class Model(BaseModel):
     @classmethod
     @property
     def tablename(cls) -> str:
-        """Get the tablename, generated if not provided
-        in __tablename__ attributes
+        """Get the tablename, generated if not provided in __tablename__
+        attributes.
 
         This method generates a pluralized name.
 
@@ -174,7 +174,6 @@ class Model(BaseModel):
         - analysis → analysis (no changes)
 
         :type: string
-
         """
         try:
             tablename = getattr(cls, "__tablename__").lower()
@@ -196,7 +195,8 @@ class Model(BaseModel):
         return tablename
 
     def todict(self) -> dict:
-        """Transform the current object to dict that can be written in RethinkDB"""
+        """Transform the current object to dict that can be written in
+        RethinkDB."""
 
         annotations = get_type_hints(self.__class__)
 
@@ -216,7 +216,10 @@ class Model(BaseModel):
         return data
 
     def save(self) -> "Model":
-        """Insert or update data if self.id is set. Return the save object (self)"""
+        """Insert or update data if self.id is set.
+
+        Return the save object (self)
+        """
         now = datetime.astimezone(datetime.now())
         if self.id:
             self.updated_on = now
@@ -245,7 +248,7 @@ class Model(BaseModel):
 
     @classmethod
     def get(cls, data_id: Optional[str]) -> Optional["Model"]:
-        """Return the correct model object"""
+        """Return the correct model object."""
         if data_id is None:
             return None
 
@@ -272,7 +275,7 @@ class Model(BaseModel):
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
     ) -> List["Model"]:
-        """Get collection of results"""
+        """Get collection of results."""
 
         select = {}
         if db.SOFT_DELETE:
@@ -286,7 +289,7 @@ class Model(BaseModel):
         return [cls.__build(u) for u in results]
 
     def delete(self):
-        """Delete this object from DB"""
+        """Delete this object from DB."""
         if db.SOFT_DELETE:
             self.__r.table(self.tablename).get(self.id).update(
                 {"deleted_on": datetime.astimezone(datetime.now())}
@@ -307,7 +310,7 @@ class Model(BaseModel):
 
     @classmethod
     def __build(cls, result: dict) -> "Model":
-        """Build the object with nested object if there's Linked attributes"""
+        """Build the object with nested object if there's Linked attributes."""
 
         for name, kind in get_type_hints(cls).items():
             models = [m for m in get_args(kind) if issubclass(m, Model)]
@@ -327,7 +330,7 @@ class Model(BaseModel):
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
     ) -> Union[List["Model"]]:
-        """Select object in database with filters"""
+        """Select object in database with filters."""
 
         # force not deleted object
         if db.SOFT_DELETE:
@@ -347,7 +350,7 @@ class Model(BaseModel):
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
     ) -> "Model":
-        """Join linked models to the current model, fetched by id"""
+        """Join linked models to the current model, fetched by id."""
         for model in models:
             if not issubclass(model, Model):
                 continue
@@ -366,21 +369,21 @@ class Model(BaseModel):
 
     @classmethod
     def truncate(cls):
-        """Truncate table, delete everything in the table"""
+        """Truncate table, delete everything in the table."""
         rdb, conn = connect()
         rdb.table(cls.tablename).delete().run(conn)
         conn.close()
 
     def __del__(self):
-        """On object deletion, close database connection"""
+        """On object deletion, close database connection."""
         self.__conn.close()
 
     def __dict__(self):
-        """Dict representation"""
+        """Dict representation."""
         return self.todict()
 
     def __repr__(self):
-        """Representation of the object"""
+        """Representation of the object."""
         return repr(self.todict())
 
     @classmethod
@@ -406,5 +409,6 @@ class Model(BaseModel):
 
     # pylint: disable=useless-super-delegation
     def __getattribute__(self, name: str) -> Any:
-        """Mainly done to avoid errors in IDE and editors when we want to access model properties"""
+        """Mainly done to avoid errors in IDE and editors when we want to
+        access model properties."""
         return super().__getattribute__(name)

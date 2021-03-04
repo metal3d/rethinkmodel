@@ -94,9 +94,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../basic-usage.html">Basic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Usage examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules and Classes refernce</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#rethinkdb-model-base-functions">RethinkDB Model base functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="model.html">rethinkmodel.model - Model definition and methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="db.html">rethinkmodel.db - Connection and data management options</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.manage - Automatic database and table creation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.manage - Automatic database and table creation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#automatic-database-initialisation-tools">Automatic database initialisation tools</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -170,7 +174,8 @@
             
   <div class="section" id="module-rethinkmodel.manage">
 <span id="rethinkmodel-manage-automatic-database-and-table-creation"></span><h1>rethinkmodel.manage - Automatic database and table creation<a class="headerlink" href="#module-rethinkmodel.manage" title="Permalink to this headline">¶</a></h1>
-<p>Automatic database initialisation tools</p>
+<div class="section" id="automatic-database-initialisation-tools">
+<h2>Automatic database initialisation tools<a class="headerlink" href="#automatic-database-initialisation-tools" title="Permalink to this headline">¶</a></h2>
 <p>This module proposes some functions to automatically create database and
 tables by introspecting modules. It can be used in Python, or from command line (in progress).</p>
 <p>The way to go is th create a python script, named “manage.py” for example, that will do
@@ -195,29 +200,31 @@ the job. For example:</p>
 <dl class="py function">
 <dt id="rethinkmodel.manage.auto">
 <code class="sig-prename descclassname"><span class="pre">rethinkmodel.manage.</span></code><code class="sig-name descname"><span class="pre">auto</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="model.html#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/manage.html#auto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.manage.auto" title="Permalink to this definition">¶</a></dt>
-<dd><p>Automatic database and table creation for the given type (Model child)</p>
+<dd><p>Automatic database and table creation for the given type (Model
+child)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="rethinkmodel.manage.check_db">
 <code class="sig-prename descclassname"><span class="pre">rethinkmodel.manage.</span></code><code class="sig-name descname"><span class="pre">check_db</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/manage.html#check_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.manage.check_db" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if DB_NAME exists, or create it</p>
+<dd><p>Check if DB_NAME exists, or create it.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="rethinkmodel.manage.introspect">
 <code class="sig-prename descclassname"><span class="pre">rethinkmodel.manage.</span></code><code class="sig-name descname"><span class="pre">introspect</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modpath</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/manage.html#introspect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.manage.introspect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Introspect module inside a given path</p>
+<dd><p>Introspect module inside a given path.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="rethinkmodel.manage.manage">
 <code class="sig-prename descclassname"><span class="pre">rethinkmodel.manage.</span></code><code class="sig-name descname"><span class="pre">manage</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mod</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/manage.html#manage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.manage.manage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all classes from given module and
-call “auto()” function to create table. This function accept
-a module, or the module name as string.</p>
+<dd><p>Get all classes from given module and call “auto()” function to create
+table.</p>
+<p>This function accept a module, or the module name as string.</p>
 </dd></dl>
 
+</div>
 </div>
 
 
