@@ -1,10 +1,14 @@
 ---
+addons:
+  rethinkdb: "2.3"
+  sonarcloud:
+    organization: "metal3d"
+    token:
+      secure: "P6GV5K7nImqAq8hCu1URg5EqTRXbMgXIN3/UlUoXSd2/8Ix0DOHmSUAoZy/HWgTJRXMpX5UgI7eUD6uaR8oWWDAL2oc4MDW17/i2p3RSnRYiL2XrEIrY8RW0qXl3jZgFaqQrEkNqTR3wCdijNbE3sOPFq4zzkAnZzL0tmFgYfvlVnO5/0QSjURJE5eSctkBj4b6JXmBAIgfKr8i2GBQYznggORNRooZPxijzTJ7X0mRVecPpikFBw84Liz1FwDOdkCeZKgSW/EXvxsjqOPd6E9JhQlhRuZUkUmbD3DnY9wnPwyYgsk/6t/n0sDuIvtVcGP2DBR7/tSyMFnlt2vESz8+JXQPdxKyS0qT0jRt+RyFgkFwfSHTcUII2Ag1S3UgJUQa1GYRarVn9YUMfn3yzqcPYjRMdh2Vnq8+RIzt3ydfU4fh4WAfoLfGJJWT7i1agbjf4RCucuCbDr5CRHciEcEO9ZJZI5OEqlJTa8dKQoVyiAi3Styyrq5SzD6ndU2ha8Yv3e78Zsymb+RNMlXQJNC6avWZiAh96qjVyGNTMBGvoIx9Bg0dnqhEYTQu7Pva2Dftlpb4Cf5Fi+YPEYgZURpcpf0EAcrdL2PPsV35NzVbPCbDMBbxp8iJmUPGzWV/7ABjBuMUHBt8Z9qbgNRO3YXiU7XhLBeg2NHBRJ7peDNI="
+
 langage: python
 python:
   - 3.9
-addons:
-  rethinkdb: "2.3"
-
 env:
   - RM_HOST="localhost"
 
@@ -15,6 +19,4 @@ install:
 script:
   - sudo service rethinkdb restart && sleep 10
   - make test
-
-after_success:
-  - bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r ./coverage-reports/coverage.xml
+  - sonar-scanner
