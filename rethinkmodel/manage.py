@@ -1,6 +1,4 @@
-"""
-Automatic database initialisation tools
-=======================================
+"""Automatic database initialisation tools
 
 This module proposes some functions to automatically create database and
 tables by introspecting modules. It can be used in Python, or from command line (in progress).
@@ -11,7 +9,7 @@ the job. For example:
 .. code-block::
 
     import rethinkmodel
-    from rethinkmodel.manage as manage 
+    from rethinkmodel.manage as manage
 
     import myproject.dataModule # this is your module
 
@@ -46,7 +44,7 @@ LOG.setLevel(logging.INFO)
 
 
 def check_db():
-    """ Check if DB_NAME exists, or create it """
+    """Check if DB_NAME exists, or create it"""
     rdb = RethinkDB()
     conn = rdb.connect(
         host=db.HOST,
@@ -66,7 +64,7 @@ def check_db():
 
 
 def auto(member: Type[Model]):
-    """ automatic database and table creation for the given type (Model child)"""
+    """Automatic database and table creation for the given type (Model child)"""
 
     if not issubclass(member, Model) or member is Model:
         return
@@ -111,7 +109,7 @@ def manage(mod: Any):
 
 
 def introspect(modpath: str):
-    """ Introspect module inside a given path """
+    """Introspect module inside a given path"""
     name = os.path.basename(modpath)
     name = name.replace(".py", "")
 

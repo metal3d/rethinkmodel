@@ -1,4 +1,4 @@
-""" Test manage module """
+"""Test manage module"""
 # pylint disable=missing-class-docstring,too-few-public-methods
 
 import unittest

@@ -1,6 +1,4 @@
-"""
-Module to create and manage your models
-=======================================
+"""Module to create and manage your models
 
 Each data object **must** inherit from :code:`Model` class and contains
 some annotations to define the types. Types can be "simples" or "Model" children.
@@ -79,10 +77,10 @@ class BaseModel:  # pylint: disable=too-few-public-methods
     updated_on: Optional[datetime]
 
     def on_created(self):
-        """ Called after the object is created in database """
+        """Called after the object is created in database"""
 
     def on_modified(self):
-        """ Called after the object is modified in database """
+        """Called after the object is modified in database"""
 
     def on_deleted(self):
         """Called after the object is deleted from database
@@ -198,7 +196,7 @@ class Model(BaseModel):
         return tablename
 
     def todict(self) -> dict:
-        """ Return dict that can be written in db """
+        """Transform the current object to dict that can be written in RethinkDB"""
 
         annotations = get_type_hints(self.__class__)
 
@@ -218,7 +216,7 @@ class Model(BaseModel):
         return data
 
     def save(self) -> "Model":
-        """ Insert or update data if self.id is set. Return the save object (self)."""
+        """Insert or update data if self.id is set. Return the save object (self)"""
         now = datetime.astimezone(datetime.now())
         if self.id:
             self.updated_on = now
@@ -247,7 +245,7 @@ class Model(BaseModel):
 
     @classmethod
     def get(cls, data_id: Optional[str]) -> Optional["Model"]:
-        """ Return the correct model object """
+        """Return the correct model object"""
         if data_id is None:
             return None
 
@@ -274,7 +272,7 @@ class Model(BaseModel):
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
     ) -> List["Model"]:
-        """ Get collection of results """
+        """Get collection of results"""
 
         select = {}
         if db.SOFT_DELETE:
@@ -288,7 +286,7 @@ class Model(BaseModel):
         return [cls.__build(u) for u in results]
 
     def delete(self):
-        """ Delete this object from DB """
+        """Delete this object from DB"""
         if db.SOFT_DELETE:
             self.__r.table(self.tablename).get(self.id).update(
                 {"deleted_on": datetime.astimezone(datetime.now())}
@@ -301,7 +299,7 @@ class Model(BaseModel):
 
     @classmethod
     def delete_id(cls, idx: str):
-        """ Delete the object that is identified by "id" """
+        """Delete the object that is identified by :code:`id`"""
 
         data = cls(id=idx)
         data.id = idx
@@ -309,7 +307,7 @@ class Model(BaseModel):
 
     @classmethod
     def __build(cls, result: dict) -> "Model":
-        """ Build the object with nested object if there's Linked attributes """
+        """Build the object with nested object if there's Linked attributes"""
 
         for name, kind in get_type_hints(cls).items():
             models = [m for m in get_args(kind) if issubclass(m, Model)]
@@ -329,7 +327,7 @@ class Model(BaseModel):
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
     ) -> Union[List["Model"]]:
-        """ Select object in database with filters """
+        """Select object in database with filters"""
 
         # force not deleted object
         if db.SOFT_DELETE:
@@ -349,7 +347,7 @@ class Model(BaseModel):
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
     ) -> "Model":
-        """ Join linked models to the current model, fetched by id """
+        """Join linked models to the current model, fetched by id"""
         for model in models:
             if not issubclass(model, Model):
                 continue
@@ -368,18 +366,21 @@ class Model(BaseModel):
 
     @classmethod
     def truncate(cls):
-        """ Truncate table, delete everything in the table """
+        """Truncate table, delete everything in the table"""
         rdb, conn = connect()
         rdb.table(cls.tablename).delete().run(conn)
         conn.close()
 
     def __del__(self):
+        """On object deletion, close database connection"""
         self.__conn.close()
 
     def __dict__(self):
+        """Dict representation"""
         return self.todict()
 
     def __repr__(self):
+        """Representation of the object"""
         return repr(self.todict())
 
     @classmethod

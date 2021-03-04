@@ -1,4 +1,4 @@
-""" Generic test utils """
+"""Generic test utils"""
 
 from rethinkdb import errors
 from rethinkmodel import config, db
@@ -6,7 +6,7 @@ from rethinkmodel.db import connect
 
 
 def clean(dbname: str):
-    """ Test utils, clean database to recreate it """
+    """Test utils, clean database to recreate it"""
     db.DB_NAME = dbname
     config(dbname=dbname)
     rdb, conn = connect()

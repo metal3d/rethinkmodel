@@ -95,10 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../basic-usage.html">Basic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Usage examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules and Classes refernce</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.model - Model definition and methods</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-to-create-and-manage-your-models">Module to create and manage your models</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.model - Model definition and methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="db.html">rethinkmodel.db - Connection and data management options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manage.html">rethinkmodel.manage - Automatic database and table creation</a></li>
 </ul>
@@ -174,8 +171,7 @@
             
   <div class="section" id="module-rethinkmodel.model">
 <span id="rethinkmodel-model-model-definition-and-methods"></span><h1>rethinkmodel.model - Model definition and methods<a class="headerlink" href="#module-rethinkmodel.model" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-to-create-and-manage-your-models">
-<h2>Module to create and manage your models<a class="headerlink" href="#module-to-create-and-manage-your-models" title="Permalink to this headline">¶</a></h2>
+<p>Module to create and manage your models</p>
 <p>Each data object <strong>must</strong> inherit from <code class="code docutils literal notranslate"><span class="pre">Model</span></code> class and contains
 some annotations to define the types. Types can be “simples” or “Model” children.</p>
 <p>Each Model has got:</p>
@@ -281,7 +277,7 @@ manage a cascade deletion.</p>
 <dl class="py method">
 <dt id="rethinkmodel.model.Model.delete_id">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">delete_id</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.delete_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.delete_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the object that is identified by “id”</p>
+<dd><p>Delete the object that is identified by <code class="code docutils literal notranslate"><span class="pre">id</span></code></p>
 </dd></dl>
 
 <dl class="py method">
@@ -311,13 +307,13 @@ manage a cascade deletion.</p>
 <dl class="py method">
 <dt id="rethinkmodel.model.Model.save">
 <code class="sig-name descname"><span class="pre">save</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Insert or update data if self.id is set. Return the save object (self).</p>
+<dd><p>Insert or update data if self.id is set. Return the save object (self)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="rethinkmodel.model.Model.todict">
 <code class="sig-name descname"><span class="pre">todict</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.todict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.todict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return dict that can be written in db</p>
+<dd><p>Transform the current object to dict that can be written in RethinkDB</p>
 </dd></dl>
 
 <dl class="py method">
@@ -328,7 +324,6 @@ manage a cascade deletion.</p>
 
 </dd></dl>
 
-</div>
 </div>
 
 

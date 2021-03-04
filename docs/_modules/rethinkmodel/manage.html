@@ -161,9 +161,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for rethinkmodel.manage</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Automatic database initialisation tools</span>
-<span class="sd">=======================================</span>
+<span></span><span class="sd">&quot;&quot;&quot;Automatic database initialisation tools</span>
 
 <span class="sd">This module proposes some functions to automatically create database and</span>
 <span class="sd">tables by introspecting modules. It can be used in Python, or from command line (in progress).</span>
@@ -174,7 +172,7 @@
 <span class="sd">.. code-block::</span>
 
 <span class="sd">    import rethinkmodel</span>
-<span class="sd">    from rethinkmodel.manage as manage </span>
+<span class="sd">    from rethinkmodel.manage as manage</span>
 
 <span class="sd">    import myproject.dataModule # this is your module</span>
 
@@ -209,7 +207,7 @@
 
 
 <div class="viewcode-block" id="check_db"><a class="viewcode-back" href="../../modules/manage.html#rethinkmodel.manage.check_db">[docs]</a><span class="k">def</span> <span class="nf">check_db</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Check if DB_NAME exists, or create it &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Check if DB_NAME exists, or create it&quot;&quot;&quot;</span>
     <span class="n">rdb</span> <span class="o">=</span> <span class="n">RethinkDB</span><span class="p">()</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="n">rdb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">HOST</span><span class="p">,</span>
@@ -229,7 +227,7 @@
 
 
 <div class="viewcode-block" id="auto"><a class="viewcode-back" href="../../modules/manage.html#rethinkmodel.manage.auto">[docs]</a><span class="k">def</span> <span class="nf">auto</span><span class="p">(</span><span class="n">member</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Model</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot; automatic database and table creation for the given type (Model child)&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Automatic database and table creation for the given type (Model child)&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">Model</span><span class="p">)</span> <span class="ow">or</span> <span class="n">member</span> <span class="ow">is</span> <span class="n">Model</span><span class="p">:</span>
         <span class="k">return</span>
@@ -274,7 +272,7 @@
 
 
 <div class="viewcode-block" id="introspect"><a class="viewcode-back" href="../../modules/manage.html#rethinkmodel.manage.introspect">[docs]</a><span class="k">def</span> <span class="nf">introspect</span><span class="p">(</span><span class="n">modpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Introspect module inside a given path &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Introspect module inside a given path&quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">modpath</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 

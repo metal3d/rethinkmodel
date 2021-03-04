@@ -1,4 +1,4 @@
-""" Some test with linked models """
+"""Some tests with linked models"""
 # pylint: disable=missing-class-docstring
 from typing import List, Type
 from unittest import TestCase
@@ -34,7 +34,7 @@ class TestOneToMany(TestCase):
         return super().setUp()
 
     def test_relations(self):
-        """ Test to create a Galley with images """
+        """Test to create a Galley with images"""
 
         users = []
         for i in range(2):

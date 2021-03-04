@@ -96,10 +96,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules and Classes refernce</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="model.html">rethinkmodel.model - Model definition and methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="db.html">rethinkmodel.db - Connection and data management options</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.manage - Automatic database and table creation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#automatic-database-initialisation-tools">Automatic database initialisation tools</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.manage - Automatic database and table creation</a></li>
 </ul>
 </li>
 </ul>
@@ -173,14 +170,13 @@
             
   <div class="section" id="module-rethinkmodel.manage">
 <span id="rethinkmodel-manage-automatic-database-and-table-creation"></span><h1>rethinkmodel.manage - Automatic database and table creation<a class="headerlink" href="#module-rethinkmodel.manage" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="automatic-database-initialisation-tools">
-<h2>Automatic database initialisation tools<a class="headerlink" href="#automatic-database-initialisation-tools" title="Permalink to this headline">¶</a></h2>
+<p>Automatic database initialisation tools</p>
 <p>This module proposes some functions to automatically create database and
 tables by introspecting modules. It can be used in Python, or from command line (in progress).</p>
 <p>The way to go is th create a python script, named “manage.py” for example, that will do
 the job. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rethinkmodel</span>
-<span class="kn">from</span> <span class="nn">rethinkmodel.manage</span> <span class="k">as</span> <span class="n">manage</span> 
+<span class="kn">from</span> <span class="nn">rethinkmodel.manage</span> <span class="k">as</span> <span class="n">manage</span>
 
 <span class="kn">import</span> <span class="nn">myproject.dataModule</span> <span class="c1"># this is your module</span>
 
@@ -199,7 +195,7 @@ the job. For example:</p>
 <dl class="py function">
 <dt id="rethinkmodel.manage.auto">
 <code class="sig-prename descclassname"><span class="pre">rethinkmodel.manage.</span></code><code class="sig-name descname"><span class="pre">auto</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="model.html#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/manage.html#auto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.manage.auto" title="Permalink to this definition">¶</a></dt>
-<dd><p>automatic database and table creation for the given type (Model child)</p>
+<dd><p>Automatic database and table creation for the given type (Model child)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -222,7 +218,6 @@ call “auto()” function to create table. This function accept
 a module, or the module name as string.</p>
 </dd></dl>
 
-</div>
 </div>
 
 

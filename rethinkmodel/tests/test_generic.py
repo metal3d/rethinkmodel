@@ -1,4 +1,4 @@
-""" Some Generic tests """
+"""Some Generic tests"""
 # pylint: disable=missing-class-docstring,too-few-public-methods
 
 import logging
