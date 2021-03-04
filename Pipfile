@@ -11,6 +11,7 @@ sphinx-rtd-theme = "*"
 twine = "*"
 pytest-cov = "*"
 pytest = "*"
+pydocstyle = "*"
 
 [packages]
 rethinkdb = "*"
