@@ -212,7 +212,8 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">get_args</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">LambdaType</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">get_args</span><span class="p">,</span>
                     <span class="n">get_type_hints</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">rethinkdb</span> <span class="kn">import</span> <span class="n">RethinkDB</span><span class="p">,</span> <span class="n">errors</span>
@@ -483,19 +484,40 @@
 <div class="viewcode-block" id="Model.filter"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.Model.filter">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">select</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+        <span class="n">select</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]],</span>
         <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">offset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">order_by</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;Model&quot;</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Select object in database with filters.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Select object in database with filters.</span>
+
+<span class="sd">        The :code:`select` argument can take a :code:`dict` or a callable where</span>
+<span class="sd">        RethinkDB row is accessible.</span>
+
+<span class="sd">        .. code::</span>
+
+<span class="sd">            # simple filter, all key: value is treated like a &quot;and&quot;</span>
+<span class="sd">            filtered = User.filter(select={</span>
+<span class="sd">                &quot;name&quot;: &quot;foo&quot;</span>
+<span class="sd">            })</span>
+
+<span class="sd">            # Get user with name = &quot;user1&quot; or &quot;user2&quot;.</span>
+<span class="sd">            # Here, the lambda function will get res as a row. So the</span>
+<span class="sd">            # RethinkDB methods are accessible like &quot;or_&quot;, &quot;and_&quot;, &quot;between&quot;, ...</span>
+<span class="sd">            filtered = User.filter(</span>
+<span class="sd">                select=lambda res: res[&quot;name&quot;].eq(&quot;user0&quot;).or_(res[&quot;name&quot;].eq(&quot;user2&quot;)),</span>
+<span class="sd">            )</span>
+
+<span class="sd">            See: https://rethinkdb.com/api/python/filter/</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># force not deleted object</span>
+        <span class="n">first_filter</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">SOFT_DELETE</span><span class="p">:</span>
-            <span class="n">select</span><span class="p">[</span><span class="s2">&quot;deleted_on&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">first_filter</span><span class="p">[</span><span class="s2">&quot;deleted_on&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">rdb</span><span class="p">,</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">()</span>
         <span class="n">query</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__prepare_query</span><span class="p">(</span><span class="n">rdb</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">order_by</span><span class="p">)</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">select</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">first_filter</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">select</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">__build</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span></div>

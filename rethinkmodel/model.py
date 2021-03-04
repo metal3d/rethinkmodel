@@ -49,7 +49,8 @@ See Model methods documentation to have a look on arguments (like limit, offset,
 
 """
 from datetime import datetime
-from typing import (Any, Dict, List, Optional, Type, Union, get_args,
+from types import LambdaType
+from typing import (Any, Callable, Dict, List, Optional, Type, Union, get_args,
                     get_type_hints)
 
 from rethinkdb import RethinkDB, errors
@@ -320,19 +321,40 @@ class Model(BaseModel):
     @classmethod
     def filter(
         cls,
-        select: Optional[Dict],
+        select: Optional[Union[Dict, Callable]],
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
     ) -> Union[List["Model"]]:
-        """Select object in database with filters."""
+        """Select object in database with filters.
+
+        The :code:`select` argument can take a :code:`dict` or a :code:`Callable` where
+        RethinkDB row is accessible.
+
+        .. code::
+
+            # simple filter, all key: value is treated like a "and"
+            filtered = User.filter(select={
+                "name": "foo"
+            })
+
+            # Get user with name = "user1" or "user2".
+            # Here, the lambda function will get res as a row. So the
+            # RethinkDB methods are accessible like "or_", "and_", "between", ...
+            filtered = User.filter(
+                select=lambda res: res["name"].eq("user0").or_(res["name"].eq("user2")),
+            )
+
+            See: https://rethinkdb.com/api/python/filter/
+        """
         # force not deleted object
+        first_filter = {}
         if db.SOFT_DELETE:
-            select["deleted_on"] = None
+            first_filter["deleted_on"] = None
 
         rdb, conn = connect()
         query = cls.__prepare_query(rdb, limit, offset, order_by)
-        results = query.filter(select).run(conn)
+        results = query.filter(first_filter).filter(select).run(conn)
         conn.close()
 
         return [cls.__build(u) for u in results]
