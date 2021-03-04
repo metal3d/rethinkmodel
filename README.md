@@ -48,11 +48,9 @@ There are **other methods** like `join()`, `get_all()` and so on. Please check d
 
 ## The goals
 
--   Describe the models in the simplest possible way, but also in the most meaningful way
-
--   Make use of powerful typing package from Python > 3.7
-
--   Avoid type checking at runtime (What ?) but let your IDE punish you
+- Describe the models in the simplest possible way, but also in the most meaningful way
+- Make use of powerful typing package from Python > 3.7
+- Avoid type checking at runtime (What ?) but let your IDE punish you
 
 Python is not a staticly typed langage. But Python developers want it
 (or not 😜) - So there are many Python tools that are designed to use
@@ -61,12 +59,9 @@ PyLance), MyPy, PyType...
 
 Your IDE can make type checking.
 
--   Vim can use [coc-pyright](https://github.com/fannheyward/coc-pyright)
-
--   VsCode can use [PyLance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance)
-
--   PyCharm knows how to manage typing
-
--   etc...
+- Vim can use [coc-pyright](https://github.com/fannheyward/coc-pyright)
+- VsCode can use [PyLance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance)
+- PyCharm knows how to manage typing
+- etc...
 
 So, let's use typing ! Rethink:Model is designed to use the typing package.
