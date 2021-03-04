@@ -2,7 +2,8 @@
 
 [![Build
 Status](https://www.travis-ci.org/metal3d/rethinkmodel.svg?branch=master)](https://www.travis-ci.org/metal3d/rethinkmodel)
-[![documentation](https://badgen.net/badge/doc/official/green)](https://metal3d.github.io/rethinkmodel)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=rethinkmodel&metric=alert_status)](https://sonarcloud.io/dashboard?id=rethinkmodel)
+[![Documentation](https://badgen.net/badge/doc/official/green)](https://metal3d.github.io/rethinkmodel)
 
 Simple and easy to use ORM for [RethinkDB](https://www.rethinkdb.com).
 Use Python `typing` package and annotations to describe data
