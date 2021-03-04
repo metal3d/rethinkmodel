@@ -49,7 +49,6 @@ See Model methods documentation to have a look on arguments (like limit, offset,
 
 """
 from datetime import datetime
-from types import LambdaType
 from typing import (Any, Callable, Dict, List, Optional, Type, Union, get_args,
                     get_type_hints)
 
@@ -247,7 +246,7 @@ class Model(BaseModel):
 
     @classmethod
     def get(cls, data_id: Optional[str]) -> Optional["Model"]:
-        """Return the correct model object."""
+        """Return a Model object fetched from database for the giver ID."""
         if data_id is None:
             return None
 
@@ -345,7 +344,7 @@ class Model(BaseModel):
                 select=lambda res: res["name"].eq("user0").or_(res["name"].eq("user2")),
             )
 
-            See: https://rethinkdb.com/api/python/filter/
+        See: https://rethinkdb.com/api/python/filter/
         """
         # force not deleted object
         first_filter = {}
