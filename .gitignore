@@ -1,7 +1,7 @@
 .vim/*
 .scannerwork/*
-cover/*
 coverage/*
+coverage-reports/*
 .coverage
 **/*.pyc
 doc/_build/*
