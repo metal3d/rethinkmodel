@@ -1,5 +1,6 @@
 # Rethink:Model
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e73c388432a441b8aae9ba2e7ef502e4)](https://app.codacy.com/gh/metal3d/rethinkmodel?utm_source=github.com&utm_medium=referral&utm_content=metal3d/rethinkmodel&utm_campaign=Badge_Grade_Settings)
 [![Build Status](https://www.travis-ci.org/metal3d/rethinkmodel.svg?branch=master)](https://www.travis-ci.org/metal3d/rethinkmodel)
 [![codecov](https://codecov.io/gh/metal3d/rethinkmodel/branch/master/graph/badge.svg?token=JCBPHFQSHF)](https://codecov.io/gh/metal3d/rethinkmodel)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/b77295a282c54d48bc1a6ccfea7020ad)](https://www.codacy.com/gh/metal3d/rethinkmodel/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=metal3d/rethinkmodel&amp;utm_campaign=Badge_Grade)
