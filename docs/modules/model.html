@@ -95,11 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../basic-usage.html">Basic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Usage examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules and Classes refernce</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="index.html#rethinkdb-model-base-functions">RethinkDB Model base functions</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.model - Model definition and methods</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-to-create-and-manage-your-models">Module to create and manage your models</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">rethinkmodel.model - Model definition and methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="db.html">rethinkmodel.db - Connection and data management options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manage.html">rethinkmodel.manage - Automatic database and table creation</a></li>
 </ul>
@@ -175,8 +171,7 @@
             
   <div class="section" id="module-rethinkmodel.model">
 <span id="rethinkmodel-model-model-definition-and-methods"></span><h1>rethinkmodel.model - Model definition and methods<a class="headerlink" href="#module-rethinkmodel.model" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-to-create-and-manage-your-models">
-<h2>Module to create and manage your models<a class="headerlink" href="#module-to-create-and-manage-your-models" title="Permalink to this headline">¶</a></h2>
+<p>Module to create and manage your models.</p>
 <p>Each data object <strong>must</strong> inherit from <code class="code docutils literal notranslate"><span class="pre">Model</span></code> class and contains
 some annotations to define the types. Types can be “simples” or “Model” children.</p>
 <p>Each Model has got:</p>
@@ -223,8 +218,8 @@ some annotations to define the types. Types can be “simples” or “Model” 
 <dl class="py method">
 <dt id="rethinkmodel.model.BaseModel.get_indexes">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_indexes</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#BaseModel.get_indexes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.BaseModel.get_indexes" title="Permalink to this definition">¶</a></dt>
-<dd><p>You can override this method to return a list of indexes. This
-method is called by <a class="reference internal" href="manage.html#rethinkmodel.manage.auto" title="rethinkmodel.manage.auto"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rethinkmodel.manage.auto()</span></code></a> function to
+<dd><p>You can override this method to return a list of indexes.</p>
+<p>This method is called by <a class="reference internal" href="manage.html#rethinkmodel.manage.auto" title="rethinkmodel.manage.auto"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rethinkmodel.manage.auto()</span></code></a> function to
 prepare indexes in database.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -236,13 +231,13 @@ strings (name of properties to use as index)</p>
 <dl class="py method">
 <dt id="rethinkmodel.model.BaseModel.on_created">
 <code class="sig-name descname"><span class="pre">on_created</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#BaseModel.on_created"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.BaseModel.on_created" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after the object is created in database.</p>
+<dd><p>Is called after the object is created in database.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="rethinkmodel.model.BaseModel.on_deleted">
 <code class="sig-name descname"><span class="pre">on_deleted</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#BaseModel.on_deleted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.BaseModel.on_deleted" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after the object is deleted from database.</p>
+<dd><p>Is Called after the object is deleted from database.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>self.id is <strong>not</strong> <code class="code docutils literal notranslate"><span class="pre">None</span></code> at this point. It will be set to <code class="code docutils literal notranslate"><span class="pre">None</span></code>
@@ -254,7 +249,7 @@ manage a cascade deletion.</p>
 <dl class="py method">
 <dt id="rethinkmodel.model.BaseModel.on_modified">
 <code class="sig-name descname"><span class="pre">on_modified</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#BaseModel.on_modified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.BaseModel.on_modified" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after the object is modified in database.</p>
+<dd><p>Is called after the object is modified in database.</p>
 </dd></dl>
 
 </dd></dl>
@@ -263,8 +258,8 @@ manage a cascade deletion.</p>
 <dt id="rethinkmodel.model.Model">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">rethinkmodel.model.</span></code><code class="sig-name descname"><span class="pre">Model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model is the parent class of all tables for RethinkDB.</p>
-<p>The constructor accepts kwargs with attributes to set.</p>
-<p>For example, if the <code class="code docutils literal notranslate"><span class="pre">User</span></code> class is set like this:</p>
+<p>The constructor accepts kwargs with attributes to set. For example,
+if the <code class="code docutils literal notranslate"><span class="pre">User</span></code> class is set like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">username</span><span class="p">:</span> <span class="nb">str</span>
 </pre></div>
@@ -282,7 +277,7 @@ manage a cascade deletion.</p>
 <dl class="py method">
 <dt id="rethinkmodel.model.Model.delete_id">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">delete_id</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.delete_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.delete_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the object that is identified by <code class="code docutils literal notranslate"><span class="pre">id</span></code></p>
+<dd><p>Delete the object that is identified by <code class="code docutils literal notranslate"><span class="pre">id</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -319,8 +314,7 @@ manage a cascade deletion.</p>
 <dl class="py method">
 <dt id="rethinkmodel.model.Model.todict">
 <code class="sig-name descname"><span class="pre">todict</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.todict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.todict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform the current object to dict that can be written in
-RethinkDB.</p>
+<dd><p>Transform the current object to dict that can be written in RethinkDB.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -331,7 +325,6 @@ RethinkDB.</p>
 
 </dd></dl>
 
-</div>
 </div>
 
 

@@ -1,6 +1,4 @@
-"""
-Automatic database initialisation tools
-========================================
+"""Automatic database initialisation tools.
 
 This module proposes some functions to automatically create database and
 tables by introspecting modules. It can be used in Python, or from command line (in progress).
@@ -66,9 +64,7 @@ def check_db():
 
 
 def auto(member: Type[Model]):
-    """Automatic database and table creation for the given type (Model
-    child)"""
-
+    """Automatic database and table creation for the given type (Modelchild)."""
     if not issubclass(member, Model) or member is Model:
         return
 
@@ -98,8 +94,7 @@ def auto(member: Type[Model]):
 
 
 def manage(mod: Any):
-    """Get all classes from given module and call "auto()" function to create
-    table.
+    """Get all classes from given module and call "auto()" function to create table.
 
     This function accept a module, or the module name as string.
     """

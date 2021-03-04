@@ -161,9 +161,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for rethinkmodel.model</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Module to create and manage your models</span>
-<span class="sd">=======================================</span>
+<span></span><span class="sd">&quot;&quot;&quot;Module to create and manage your models.</span>
 
 <span class="sd">Each data object **must** inherit from :code:`Model` class and contains</span>
 <span class="sd">some annotations to define the types. Types can be &quot;simples&quot; or &quot;Model&quot; children.</span>
@@ -242,13 +240,13 @@
     <span class="n">updated_on</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span>
 
 <div class="viewcode-block" id="BaseModel.on_created"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.BaseModel.on_created">[docs]</a>    <span class="k">def</span> <span class="nf">on_created</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Called after the object is created in database.&quot;&quot;&quot;</span></div>
+        <span class="sd">&quot;&quot;&quot;Is called after the object is created in database.&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="BaseModel.on_modified"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.BaseModel.on_modified">[docs]</a>    <span class="k">def</span> <span class="nf">on_modified</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Called after the object is modified in database.&quot;&quot;&quot;</span></div>
+        <span class="sd">&quot;&quot;&quot;Is called after the object is modified in database.&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="BaseModel.on_deleted"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.BaseModel.on_deleted">[docs]</a>    <span class="k">def</span> <span class="nf">on_deleted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Called after the object is deleted from database.</span>
+        <span class="sd">&quot;&quot;&quot;Is Called after the object is deleted from database.</span>
 
 <span class="sd">        .. note::</span>
 
@@ -259,8 +257,9 @@
 
 <div class="viewcode-block" id="BaseModel.get_indexes"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.BaseModel.get_indexes">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_indexes</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;You can override this method to return a list of indexes. This</span>
-<span class="sd">        method is called by :meth:`rethinkmodel.manage.auto` function to</span>
+        <span class="sd">&quot;&quot;&quot;You can override this method to return a list of indexes.</span>
+
+<span class="sd">        This method is called by :meth:`rethinkmodel.manage.auto` function to</span>
 <span class="sd">        prepare indexes in database.</span>
 
 <span class="sd">        .. warning::</span>
@@ -274,9 +273,8 @@
 <div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Model is the parent class of all tables for RethinkDB.</span>
 
-<span class="sd">    The constructor accepts kwargs with attributes to set.</span>
-
-<span class="sd">    For example, if the :code:`User` class is set like this:</span>
+<span class="sd">    The constructor accepts kwargs with attributes to set. For example,</span>
+<span class="sd">    if the :code:`User` class is set like this:</span>
 
 <span class="sd">    .. code::</span>
 
@@ -320,8 +318,10 @@
     <span class="nd">@classmethod</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tablename</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the tablename, generated if not provided in __tablename__</span>
-<span class="sd">        attributes.</span>
+        <span class="sd">&quot;&quot;&quot;Get the tablename.</span>
+
+<span class="sd">        The table name is generated if you do not provide :code:`__tablename__`</span>
+<span class="sd">        static attribute.</span>
 
 <span class="sd">        This method generates a pluralized name.</span>
 
@@ -358,9 +358,7 @@
         <span class="k">return</span> <span class="n">tablename</span>
 
 <div class="viewcode-block" id="Model.todict"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.Model.todict">[docs]</a>    <span class="k">def</span> <span class="nf">todict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Transform the current object to dict that can be written in</span>
-<span class="sd">        RethinkDB.&quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Transform the current object to dict that can be written in RethinkDB.&quot;&quot;&quot;</span>
         <span class="n">annotations</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
 
         <span class="c1"># get only annotated attributes</span>
@@ -439,7 +437,6 @@
         <span class="n">order_by</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Model&quot;</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get collection of results.&quot;&quot;&quot;</span>
-
         <span class="n">select</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">SOFT_DELETE</span><span class="p">:</span>
             <span class="n">select</span><span class="p">[</span><span class="s2">&quot;deleted_on&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -465,8 +462,7 @@
 
 <div class="viewcode-block" id="Model.delete_id"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.Model.delete_id">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">delete_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Delete the object that is identified by :code:`id`&quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Delete the object that is identified by :code:`id`.&quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">idx</span>
         <span class="n">data</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
@@ -474,7 +470,6 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">__build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Build the object with nested object if there&#39;s Linked attributes.&quot;&quot;&quot;</span>
-
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">get_args</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span> <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Model</span><span class="p">)]</span>
             <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
@@ -494,7 +489,6 @@
         <span class="n">order_by</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;Model&quot;</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Select object in database with filters.&quot;&quot;&quot;</span>
-
         <span class="c1"># force not deleted object</span>
         <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">SOFT_DELETE</span><span class="p">:</span>
             <span class="n">select</span><span class="p">[</span><span class="s2">&quot;deleted_on&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -542,7 +536,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__dict__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Dict representation.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the dict representation.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">todict</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -572,8 +566,11 @@
 
     <span class="c1"># pylint: disable=useless-super-delegation</span>
     <span class="k">def</span> <span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Mainly done to avoid errors in IDE and editors when we want to</span>
-<span class="sd">        access model properties.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Avoid IDE problems.</span>
+
+<span class="sd">        Mainly done to avoid errors in IDE and editors when we want to</span>
+<span class="sd">        access model properties</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 </pre></div>
 

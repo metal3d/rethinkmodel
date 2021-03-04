@@ -15,39 +15,55 @@ LOGGER_NAME = "tests"
 
 
 class User(Model):
+    """Simple User."""
+
     name: Optional[str]
 
     @classmethod
     def get_indexes(cls):
+        """Return index on `name` property."""
         return ["name"]
 
 
 class Gallery(Model):
+    """A Gallery."""
+
     name: Optional[str]
 
 
 class Matrix(Model):
+    """A matrix."""
+
     name: Optional[str]
 
 
 class LongNameTable(Model):
+    """Long named table."""
+
     __tablename__ = "long"
 
 
 class LogEvent(Model):
+    """To test events."""
+
     name: Optional[str]
 
     def on_created(self):
+        """Call on created."""
         logging.getLogger(LOGGER_NAME).info("event created")
 
     def on_deleted(self):
+        """Call on deleted."""
         logging.getLogger(LOGGER_NAME).info("event deleted")
 
     def on_modified(self):
+        """Call on modified."""
         logging.getLogger(LOGGER_NAME).info("event modified")
 
 
 class SimpleType(Model):
+    """Simple type linked to User."""
+
     user: User
     name: str
     age: int
@@ -57,14 +73,16 @@ utils.clean("test_generic")
 
 
 class GenericTest(unittest.TestCase):
+    """Make som generic tests."""
+
     def setUp(self) -> None:
+        """Configure database and create tables."""
         config(dbname="test_generic")
         manage(__name__)
         return super().setUp()
 
     def test_generate_tablename(self):
         """Check if automatic name is OK."""
-
         self.assertEqual(User.tablename, "users")
         self.assertEqual(Gallery.tablename, "galleries")
         self.assertEqual(Matrix.tablename, "matrices")
@@ -88,7 +106,6 @@ class GenericTest(unittest.TestCase):
 
     def test_create(self):
         """Try to inject data in database."""
-
         user = User(name="Create user")
         user.save()
         self.assertIsNotNone(user.id)

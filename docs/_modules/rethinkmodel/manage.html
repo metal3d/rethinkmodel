@@ -161,9 +161,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for rethinkmodel.manage</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Automatic database initialisation tools</span>
-<span class="sd">========================================</span>
+<span></span><span class="sd">&quot;&quot;&quot;Automatic database initialisation tools.</span>
 
 <span class="sd">This module proposes some functions to automatically create database and</span>
 <span class="sd">tables by introspecting modules. It can be used in Python, or from command line (in progress).</span>
@@ -229,9 +227,7 @@
 
 
 <div class="viewcode-block" id="auto"><a class="viewcode-back" href="../../modules/manage.html#rethinkmodel.manage.auto">[docs]</a><span class="k">def</span> <span class="nf">auto</span><span class="p">(</span><span class="n">member</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Model</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Automatic database and table creation for the given type (Model</span>
-<span class="sd">    child)&quot;&quot;&quot;</span>
-
+    <span class="sd">&quot;&quot;&quot;Automatic database and table creation for the given type (Modelchild).&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">Model</span><span class="p">)</span> <span class="ow">or</span> <span class="n">member</span> <span class="ow">is</span> <span class="n">Model</span><span class="p">:</span>
         <span class="k">return</span>
 
@@ -261,8 +257,7 @@
 
 
 <div class="viewcode-block" id="manage"><a class="viewcode-back" href="../../modules/manage.html#rethinkmodel.manage.manage">[docs]</a><span class="k">def</span> <span class="nf">manage</span><span class="p">(</span><span class="n">mod</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get all classes from given module and call &quot;auto()&quot; function to create</span>
-<span class="sd">    table.</span>
+    <span class="sd">&quot;&quot;&quot;Get all classes from given module and call &quot;auto()&quot; function to create table.</span>
 
 <span class="sd">    This function accept a module, or the module name as string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

@@ -11,15 +11,21 @@ from . import utils
 
 
 class User(Model):
+    """A simple base user."""
+
     name: Type[str]
 
 
 class Gallery(Model):
+    """A Gallery with linked User."""
+
     name: Type[str]
     contributors: List[User]
 
 
 class Image(Model):
+    """Image is linked to a Gallery."""
+
     name: Type[str]
     gallery: Type[Gallery]
 
@@ -28,14 +34,16 @@ utils.clean("tests_one_to_many")
 
 
 class TestOneToMany(TestCase):
+    """Test one to many relations."""
+
     def setUp(self) -> None:
+        """Configure DB and create tables."""
         config(dbname="tests_one_to_many")
         manage(__name__)
         return super().setUp()
 
     def test_relations(self):
         """Test to create a Galley with images."""
-
         users = []
         for i in range(2):
             user = User(name=f"User{i}")

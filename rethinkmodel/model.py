@@ -1,6 +1,4 @@
-"""
-Module to create and manage your models
-=======================================
+"""Module to create and manage your models.
 
 Each data object **must** inherit from :code:`Model` class and contains
 some annotations to define the types. Types can be "simples" or "Model" children.
@@ -79,13 +77,13 @@ class BaseModel:  # pylint: disable=too-few-public-methods
     updated_on: Optional[datetime]
 
     def on_created(self):
-        """Called after the object is created in database."""
+        """Is called after the object is created in database."""
 
     def on_modified(self):
-        """Called after the object is modified in database."""
+        """Is called after the object is modified in database."""
 
     def on_deleted(self):
-        """Called after the object is deleted from database.
+        """Is Called after the object is deleted from database.
 
         .. note::
 
@@ -96,8 +94,9 @@ class BaseModel:  # pylint: disable=too-few-public-methods
 
     @classmethod
     def get_indexes(cls) -> Optional[Union[List, Dict]]:
-        """You can override this method to return a list of indexes. This
-        method is called by :meth:`rethinkmodel.manage.auto` function to
+        """You can override this method to return a list of indexes.
+
+        This method is called by :meth:`rethinkmodel.manage.auto` function to
         prepare indexes in database.
 
         .. warning::
@@ -111,9 +110,8 @@ class BaseModel:  # pylint: disable=too-few-public-methods
 class Model(BaseModel):
     """Model is the parent class of all tables for RethinkDB.
 
-    The constructor accepts kwargs with attributes to set.
-
-    For example, if the :code:`User` class is set like this:
+    The constructor accepts kwargs with attributes to set. For example,
+    if the :code:`User` class is set like this:
 
     .. code::
 
@@ -157,8 +155,10 @@ class Model(BaseModel):
     @classmethod
     @property
     def tablename(cls) -> str:
-        """Get the tablename, generated if not provided in __tablename__
-        attributes.
+        """Get the tablename.
+
+        The table name is generated if you do not provide :code:`__tablename__`
+        static attribute.
 
         This method generates a pluralized name.
 
@@ -195,9 +195,7 @@ class Model(BaseModel):
         return tablename
 
     def todict(self) -> dict:
-        """Transform the current object to dict that can be written in
-        RethinkDB."""
-
+        """Transform the current object to dict that can be written in RethinkDB."""
         annotations = get_type_hints(self.__class__)
 
         # get only annotated attributes
@@ -276,7 +274,6 @@ class Model(BaseModel):
         order_by: Optional[Union[Dict, str]] = None,
     ) -> List["Model"]:
         """Get collection of results."""
-
         select = {}
         if db.SOFT_DELETE:
             select["deleted_on"] = None
@@ -302,8 +299,7 @@ class Model(BaseModel):
 
     @classmethod
     def delete_id(cls, idx: str):
-        """Delete the object that is identified by :code:`id`"""
-
+        """Delete the object that is identified by :code:`id`."""
         data = cls(id=idx)
         data.id = idx
         data.delete()
@@ -311,7 +307,6 @@ class Model(BaseModel):
     @classmethod
     def __build(cls, result: dict) -> "Model":
         """Build the object with nested object if there's Linked attributes."""
-
         for name, kind in get_type_hints(cls).items():
             models = [m for m in get_args(kind) if issubclass(m, Model)]
             for model in models:
@@ -331,7 +326,6 @@ class Model(BaseModel):
         order_by: Optional[Union[Dict, str]] = None,
     ) -> Union[List["Model"]]:
         """Select object in database with filters."""
-
         # force not deleted object
         if db.SOFT_DELETE:
             select["deleted_on"] = None
@@ -379,7 +373,7 @@ class Model(BaseModel):
         self.__conn.close()
 
     def __dict__(self):
-        """Dict representation."""
+        """Return the dict representation."""
         return self.todict()
 
     def __repr__(self):
@@ -409,6 +403,9 @@ class Model(BaseModel):
 
     # pylint: disable=useless-super-delegation
     def __getattribute__(self, name: str) -> Any:
-        """Mainly done to avoid errors in IDE and editors when we want to
-        access model properties."""
+        """Avoid IDE problems.
+
+        Mainly done to avoid errors in IDE and editors when we want to
+        access model properties
+        """
         return super().__getattribute__(name)

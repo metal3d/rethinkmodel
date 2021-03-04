@@ -11,6 +11,8 @@ from rethinkmodel.tests import utils
 
 
 class ManagedTable(Model):
+    """To check if the table is well created."""
+
     name: str
 
 
@@ -18,7 +20,10 @@ utils.clean("test_manage")
 
 
 class ManageTest(unittest.TestCase):
+    """Test the manage module."""
+
     def setUp(self) -> None:
+        """Confugure database."""
         config(dbname="test_manage")
         return super().setUp()
 
