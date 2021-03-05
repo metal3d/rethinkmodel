@@ -482,3 +482,11 @@ class Model(BaseModel):
         access model properties
         """
         return super().__getattribute__(name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        """Avoid IDE problems.
+
+        Mainly done to avoid errors in IDE and editors when we want to
+        access model properties
+        """
+        return super().__setattr__(name, value)
