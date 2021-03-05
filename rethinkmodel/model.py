@@ -143,6 +143,8 @@ class Model(BaseModel):
         self.deleted_on = None
 
         annotations = get_type_hints(self.__class__).keys()
+        for attr in annotations:
+            setattr(self, attr, None)
 
         # and then, for given parameters...
         for name, value in kwargs.items():
@@ -345,7 +347,12 @@ class Model(BaseModel):
                 select=lambda res: res["name"].eq("user0").or_(res["name"].eq("user2")),
             )
 
-        See: https://rethinkdb.com/api/python/filter/
+        .. warning::
+
+            Inside lambda (or any Callable), the argument is a RethinkDB row object. You
+            will need to use specific RethinkDB methods to make the filter to work.
+
+            See: https://rethinkdb.com/api/python/filter/
         """
         # force not deleted object
         first_filter = {}
@@ -385,7 +392,7 @@ class Model(BaseModel):
 
     @classmethod
     def changes(cls, select: Optional[Union[Dict, Callable]] = None) -> Generator:
-        """Get a feed Generator that react on changes.
+        """Get a feed Generator which reacts on changes.
 
         This return a blocking cursor **tuple** where the first element is the
         "old value" and the second is the "new value". It is very usefull to make
@@ -404,7 +411,7 @@ class Model(BaseModel):
 
         .. code::
 
-            feed = User.changes(select=lambda x = x['name'] == "Foo")
+            feed = User.changes(select=lambda x = x['name'].eq("Foo"))
             for oldval, newval in feed:
                 # only on user named "Foo"
 
@@ -429,6 +436,7 @@ class Model(BaseModel):
             if change.get("new_val", False):
                 new = cls(**change.get("new_val"))
             yield old, new
+        feed.close()
 
     @classmethod
     def truncate(cls):

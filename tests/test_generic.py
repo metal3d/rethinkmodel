@@ -14,6 +14,12 @@ from tests import utils
 LOGGER_NAME = "tests"
 
 
+class ANumericEnded1(Model):
+    """Model with name ended by a number."""
+
+    foo: str
+
+
 class User(Model):
     """Simple User."""
 
@@ -80,6 +86,11 @@ class GenericTest(unittest.TestCase):
         config(dbname="test_generic")
         manage(__name__)
         return super().setUp()
+
+    def test_generate_tablename_numeric(self):
+        """Check if table name ended by a number is not changed."""
+        foo = ANumericEnded1(foo="test")
+        self.assertEqual(foo.tablename, "anumericended1")
 
     def test_generate_tablename(self):
         """Check if automatic name is OK."""
