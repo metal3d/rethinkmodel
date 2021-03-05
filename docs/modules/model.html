@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>rethinkmodel.model - Model definition and methods &mdash; RethinkModel 0.0.1 documentation</title>
+  <title>rethinkmodel.model - Model definition and methods &mdash; Rethink:Model 0.0.1 documentation</title>
   
 
   
@@ -115,7 +115,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">RethinkModel</a>
+          <a href="../index.html">Rethink:Model</a>
         
       </nav>
 
@@ -269,6 +269,29 @@ if the <code class="code docutils literal notranslate"><span class="pre">User</s
 </pre></div>
 </div>
 <dl class="py method">
+<dt id="rethinkmodel.model.Model.changes">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">changes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.changes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.changes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a feed Generator which reacts on changes.</p>
+<p>This return a blocking cursor <strong>tuple</strong> where the first element is the
+“old value” and the second is the “new value”. It is very usefull to make
+action when something changed in database.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">feed</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">changes</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">oldval</span><span class="p">,</span> <span class="n">newval</span> <span class="ow">in</span> <span class="n">feed</span><span class="p">:</span>
+   <span class="c1"># here, we have changes from oldval to newval</span>
+   <span class="c1"># when a row changed in &quot;users&quot; table.</span>
+</pre></div>
+</div>
+<p>The “select” argument is the same as in
+<a class="reference internal" href="#rethinkmodel.model.Model.filter" title="rethinkmodel.model.Model.filter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rethinkmodel.model.Model.filter()</span></code></a>, it can be a <code class="code docutils literal notranslate"><span class="pre">dict</span></code> or a
+callable function or lambda to filter data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">feed</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">changes</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="s2">&quot;Foo&quot;</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">oldval</span><span class="p">,</span> <span class="n">newval</span> <span class="ow">in</span> <span class="n">feed</span><span class="p">:</span>
+    <span class="c1"># only on user named &quot;Foo&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="rethinkmodel.model.Model.delete">
 <code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete this object from DB.</p>
@@ -282,7 +305,7 @@ if the <code class="code docutils literal notranslate"><span class="pre">User</s
 
 <dl class="py method">
 <dt id="rethinkmodel.model.Model.filter">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.filter" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select object in database with filters.</p>
 <p>The <code class="code docutils literal notranslate"><span class="pre">select</span></code> argument can take a <code class="code docutils literal notranslate"><span class="pre">dict</span></code> or a <code class="code docutils literal notranslate"><span class="pre">Callable</span></code> where
 RethinkDB row is accessible.</p>
@@ -299,7 +322,12 @@ RethinkDB row is accessible.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Inside lambda (or any Callable), the argument is a RethinkDB row object. You
+will need to use specific RethinkDB methods to make the filter to work.</p>
 <p>See: <a class="reference external" href="https://rethinkdb.com/api/python/filter/">https://rethinkdb.com/api/python/filter/</a></p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -312,6 +340,12 @@ RethinkDB row is accessible.</p>
 <dt id="rethinkmodel.model.Model.get_all">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#rethinkmodel.model.Model" title="rethinkmodel.model.Model"><span class="pre">rethinkmodel.model.Model</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.get_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.get_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get collection of results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rethinkmodel.model.Model.get_connection">
+<code class="sig-name descname"><span class="pre">get_connection</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rethinkmodel/model.html#Model.get_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rethinkmodel.model.Model.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the RethinkDB object and connection holder.</p>
 </dd></dl>
 
 <dl class="py method">

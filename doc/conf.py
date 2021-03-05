@@ -1,3 +1,5 @@
+"""Configuration for sphinx."""
+# pylint: disable=all
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -18,7 +20,7 @@ sys.path.insert(0, os.path.abspath(".."))
 
 # -- Project information -----------------------------------------------------
 
-project = "RethinkModel"
+project = "Rethink:Model"
 copyright = "2021, Patrice Ferlet"
 author = "Patrice Ferlet"
 

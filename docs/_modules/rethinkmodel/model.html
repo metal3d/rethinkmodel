@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>rethinkmodel.model &mdash; RethinkModel 0.0.1 documentation</title>
+  <title>rethinkmodel.model &mdash; Rethink:Model 0.0.1 documentation</title>
   
 
   
@@ -108,7 +108,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">RethinkModel</a>
+          <a href="../../index.html">Rethink:Model</a>
         
       </nav>
 
@@ -211,10 +211,10 @@
 <span class="sd">See Model methods documentation to have a look on arguments (like limit, offset, ...)</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">LambdaType</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">get_args</span><span class="p">,</span>
-                    <span class="n">get_type_hints</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span>
+                    <span class="n">Union</span><span class="p">,</span> <span class="n">get_args</span><span class="p">,</span> <span class="n">get_type_hints</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">rethinkdb</span> <span class="kn">import</span> <span class="n">RethinkDB</span><span class="p">,</span> <span class="n">errors</span>
 
@@ -306,6 +306,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">deleted_on</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">annotations</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># and then, for given parameters...</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -484,7 +486,7 @@
 <div class="viewcode-block" id="Model.filter"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.Model.filter">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">select</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]],</span>
+        <span class="n">select</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">offset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">order_by</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -508,7 +510,12 @@
 <span class="sd">                select=lambda res: res[&quot;name&quot;].eq(&quot;user0&quot;).or_(res[&quot;name&quot;].eq(&quot;user2&quot;)),</span>
 <span class="sd">            )</span>
 
-<span class="sd">        See: https://rethinkdb.com/api/python/filter/</span>
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            Inside lambda (or any Callable), the argument is a RethinkDB row object. You</span>
+<span class="sd">            will need to use specific RethinkDB methods to make the filter to work.</span>
+
+<span class="sd">            See: https://rethinkdb.com/api/python/filter/</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># force not deleted object</span>
         <span class="n">first_filter</span> <span class="o">=</span> <span class="p">{}</span>
@@ -546,12 +553,64 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
+<div class="viewcode-block" id="Model.changes"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.Model.changes">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">changes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">select</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get a feed Generator which reacts on changes.</span>
+
+<span class="sd">        This return a blocking cursor **tuple** where the first element is the</span>
+<span class="sd">        &quot;old value&quot; and the second is the &quot;new value&quot;. It is very usefull to make</span>
+<span class="sd">        action when something changed in database.</span>
+
+<span class="sd">        .. code::</span>
+
+<span class="sd">            feed = User.changes()</span>
+<span class="sd">            for oldval, newval in feed:</span>
+<span class="sd">               # here, we have changes from oldval to newval</span>
+<span class="sd">               # when a row changed in &quot;users&quot; table.</span>
+
+<span class="sd">        The &quot;select&quot; argument is the same as in</span>
+<span class="sd">        :meth:`rethinkmodel.model.Model.filter`, it can be a :code:`dict` or a</span>
+<span class="sd">        callable function or lambda to filter data.</span>
+
+<span class="sd">        .. code::</span>
+
+<span class="sd">            feed = User.changes(select=lambda x = x[&#39;name&#39;].eq(&quot;Foo&quot;))</span>
+<span class="sd">            for oldval, newval in feed:</span>
+<span class="sd">                # only on user named &quot;Foo&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># we need an holder object to ensure RethinkDB connection to be</span>
+        <span class="c1"># closed when the object is destroyed after the generator stopped</span>
+
+        <span class="n">holder</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">rdb</span><span class="p">,</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">holder</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">rdb</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">tablename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">SOFT_DELETE</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">({</span><span class="s2">&quot;deleted_on&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">select</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
+
+        <span class="n">feed</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">changes</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">change</span> <span class="ow">in</span> <span class="n">feed</span><span class="p">:</span>
+            <span class="c1"># yield change</span>
+            <span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">change</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;old_val&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">old</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">change</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;old_val&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">change</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;new_val&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">new</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">change</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;new_val&quot;</span><span class="p">))</span>
+            <span class="k">yield</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span>
+        <span class="n">feed</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="Model.truncate"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.Model.truncate">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">truncate</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Truncate table, delete everything in the table.&quot;&quot;&quot;</span>
         <span class="n">rdb</span><span class="p">,</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">()</span>
         <span class="n">rdb</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">tablename</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Model.get_connection"><a class="viewcode-back" href="../../modules/model.html#rethinkmodel.model.Model.get_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the RethinkDB object and connection holder.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__conn</span></div>
 
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;On object deletion, close database connection.&quot;&quot;&quot;</span>
@@ -593,7 +652,15 @@
 <span class="sd">        Mainly done to avoid errors in IDE and editors when we want to</span>
 <span class="sd">        access model properties</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Avoid IDE problems.</span>
+
+<span class="sd">        Mainly done to avoid errors in IDE and editors when we want to</span>
+<span class="sd">        access model properties</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

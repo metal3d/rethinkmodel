@@ -54,7 +54,7 @@ Rethink:Model automatically manages `One to One` and `One to Many` relations. Th
 
     class Product(Model):
         name: Optional[str] # we can accept None
-        categories: List[str]
+        categories: List[str] # One to many
 
     class Project(Model):
         name: str
@@ -63,4 +63,3 @@ Rethink:Model automatically manages `One to One` and `One to Many` relations. Th
         # this will save a list of User IDs
         contributors: List[User]
 
-See the :code:`Linked` documentation part have more details.
