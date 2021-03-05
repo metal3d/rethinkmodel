@@ -48,9 +48,10 @@ To get Linked objects, it's possible to use "join()" method
 See Model methods documentation to have a look on arguments (like limit, offset, ...)
 
 """
+import logging
 from datetime import datetime
-from typing import (Any, Callable, Dict, List, Optional, Type, Union, get_args,
-                    get_type_hints)
+from typing import (Any, Callable, Dict, Generator, List, Optional, Type,
+                    Union, get_args, get_type_hints)
 
 from rethinkdb import RethinkDB, errors
 
@@ -320,7 +321,7 @@ class Model(BaseModel):
     @classmethod
     def filter(
         cls,
-        select: Optional[Union[Dict, Callable]],
+        select: Optional[Union[Dict, Callable]] = None,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         order_by: Optional[Union[Dict, str]] = None,
@@ -383,11 +384,62 @@ class Model(BaseModel):
         return self
 
     @classmethod
+    def changes(cls, select: Optional[Union[Dict, Callable]] = None) -> Generator:
+        """Get a feed Generator that react on changes.
+
+        This return a blocking cursor **tuple** where the first element is the
+        "old value" and the second is the "new value". It is very usefull to make
+        action when something changed in database.
+
+        .. code::
+
+            feed = User.changes()
+            for oldval, newval in feed:
+               # here, we have changes from oldval to newval
+               # when a row changed in "users" table.
+
+        The "select" argument is the same as in
+        :meth:`rethinkmodel.model.Model.filter`, it can be a :code:`dict` or a
+        callable function or lambda to filter data.
+
+        .. code::
+
+            feed = User.changes(select=lambda x = x['name'] == "Foo")
+            for oldval, newval in feed:
+                # only on user named "Foo"
+
+        """
+        # we need an holder object to ensure RethinkDB connection to be
+        # closed when the object is destroyed after the generator stopped
+
+        holder = cls()
+        rdb, conn = holder.get_connection()
+        query = rdb.table(cls.tablename)
+        if db.SOFT_DELETE:
+            query = query.filter({"deleted_on": None})
+        if select is not None:
+            query = query.filter(select)
+
+        feed = query.changes().run(conn)
+        for change in feed:
+            # yield change
+            old, new = None, None
+            if change.get("old_val", False):
+                old = cls(**change.get("old_val"))
+            if change.get("new_val", False):
+                new = cls(**change.get("new_val"))
+            yield old, new
+
+    @classmethod
     def truncate(cls):
         """Truncate table, delete everything in the table."""
         rdb, conn = connect()
         rdb.table(cls.tablename).delete().run(conn)
         conn.close()
+
+    def get_connection(self):
+        """Return the RethinkDB object and connection holder."""
+        return self.__r, self.__conn
 
     def __del__(self):
         """On object deletion, close database connection."""
