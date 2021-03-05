@@ -20,7 +20,7 @@ class User(Model):
 clean(DB_NAME)
 
 
-class BooleanSearch(TestCase):
+class FilterTests(TestCase):
     """Make tests on OR and AND queries."""
 
     def setUp(self) -> None:
