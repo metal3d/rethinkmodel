@@ -429,7 +429,6 @@ class Model(BaseModel):
 
         feed = query.changes().run(conn)
         for change in feed:
-            # yield change
             old, new = None, None
             if change.get("old_val", False):
                 old = cls(**change.get("old_val"))
