@@ -48,7 +48,6 @@ To get Linked objects, it's possible to use "join()" method
 See Model methods documentation to have a look on arguments (like limit, offset, ...)
 
 """
-import logging
 from datetime import datetime
 from typing import (Any, Callable, Dict, Generator, List, Optional, Type,
                     Union, get_args, get_type_hints)
