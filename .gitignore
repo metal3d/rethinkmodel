@@ -5,7 +5,7 @@ coverage-reports/*
 .coverage
 **/*.pyc
 doc/_build/*
-doc/_templates/*
 build/*
 dist/*
 rethinkmodel.egg-info/*
+**/.pytest_cache/*

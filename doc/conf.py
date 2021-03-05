@@ -25,7 +25,7 @@ copyright = "2021, Patrice Ferlet"
 author = "Patrice Ferlet"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0.1"
+release = "0.1.1"
 
 
 # -- General configuration ---------------------------------------------------
@@ -71,6 +71,7 @@ html_css_files = ["custom.css"]
 html_static_path = ["_static"]
 github_url = "metal3d/rethinkmodel"
 
+extrafooter = "foo"
 
 latex_engine = "xelatex"
 latex_elements = {

@@ -72,6 +72,7 @@ So, let's use typing ! Rethink:Model is designed to use the typing package.
    :maxdepth: 2
    :caption: Contents:
 
+   project
    install
    manage
    basic-usage

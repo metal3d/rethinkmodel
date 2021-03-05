@@ -38,7 +38,7 @@ clean:
 listen-doc:
 	make clean-doc doc
 	while true; do
-		inotifywait -e modify -r doc/ rethinkmodel/ | grep -P ".rst|.py|.css" && $(MAKE) clean-doc doc
+		inotifywait -e modify -r doc/ rethinkmodel/ | grep -P ".rst|.py|.css|.html" && $(MAKE) clean-doc doc
 	done
 
 deploy: build

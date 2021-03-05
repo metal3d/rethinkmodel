@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>rethinkmodel.model &mdash; Rethink:Model 0.0.1 documentation</title>
+  <title>rethinkmodel.model &mdash; Rethink:Model 0.1.1 documentation</title>
   
 
   
@@ -88,6 +88,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../project.html">Project information, repository, licence…</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../manage.html">Managing database and tables creation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../basic-usage.html">Basic usage</a></li>
@@ -211,7 +212,6 @@
 <span class="sd">See Model methods documentation to have a look on arguments (like limit, offset, ...)</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span>
                     <span class="n">Union</span><span class="p">,</span> <span class="n">get_args</span><span class="p">,</span> <span class="n">get_type_hints</span><span class="p">)</span>
@@ -592,7 +592,6 @@
 
         <span class="n">feed</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">changes</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">change</span> <span class="ow">in</span> <span class="n">feed</span><span class="p">:</span>
-            <span class="c1"># yield change</span>
             <span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">change</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;old_val&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                 <span class="n">old</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">change</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;old_val&quot;</span><span class="p">))</span>
@@ -683,7 +682,9 @@
     
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+<p><a href="https://github.com/metal3d/rethinkmodel" taget="_blank"><i class="fa fa-github"></i>&nbsp;Rethink:Model Github project page</a></p>
+
 
 </footer>
         </div>
