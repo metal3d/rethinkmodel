@@ -18,5 +18,5 @@ install:
 
 script:
   - sudo service rethinkdb restart && sleep 10
-  - make test
+  - make test TRAVIS=1
   - sonar-scanner

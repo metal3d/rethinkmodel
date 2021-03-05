@@ -1,13 +1,13 @@
 .PHONY:doc
 TEST_FILTER=""
 NOW:=$(shell date +"%Y%m%d-%H%M%S")
-TEST_HTML_REPORT=0
+TRAVIS=0
 
 test:
-ifeq ($(TEST_HTML_REPORT), 1)
-	pipenv run pytest --cov=rethinkmodel --cov-report=html:./coverage -sv $(TEST_FILTER)
-else
+ifeq ($(TRAVIS), 1)
 	pipenv run pytest --cov=rethinkmodel --cov-report=xml:./coverage-reports/coverage.xml -v 
+else
+	pipenv run pytest --cov=rethinkmodel --cov-report=html:./coverage -sv $(TEST_FILTER)
 endif
 
 build: clean
