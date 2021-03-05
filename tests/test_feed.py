@@ -7,7 +7,8 @@ from unittest.case import TestCase
 from rethinkmodel import config
 from rethinkmodel.manage import manage
 from rethinkmodel.model import Model
-from rethinkmodel.tests.utils import clean
+
+from tests.utils import clean
 
 DB_NAME = "test_feed"
 
@@ -32,7 +33,6 @@ class FeedTest(TestCase):
 
     def test_feed_get(self):
         """Test to detect table change."""
-
         first_call_name = "first"
         second_call_name = "second"
 

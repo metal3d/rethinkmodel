@@ -7,7 +7,8 @@ from rethinkmodel import config, db
 from rethinkmodel.db import connect
 from rethinkmodel.manage import introspect
 from rethinkmodel.model import Model
-from rethinkmodel.tests import utils
+
+from tests import utils
 
 
 class ManagedTable(Model):

@@ -5,7 +5,8 @@ from unittest.case import TestCase, skip
 from rethinkmodel import config
 from rethinkmodel.manage import manage
 from rethinkmodel.model import Model
-from rethinkmodel.tests.utils import clean
+
+from tests.utils import clean
 
 DB_NAME = "test_boolean"
 

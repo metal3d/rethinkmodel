@@ -7,7 +7,7 @@ from rethinkmodel import config
 from rethinkmodel.manage import manage
 from rethinkmodel.model import Model
 
-from . import utils
+from tests import utils
 
 
 class User(Model):
