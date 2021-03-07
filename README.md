@@ -1,5 +1,6 @@
 # Rethink:Model
 
+[![PyPI version](https://badge.fury.io/py/rethinkmodel.svg)](https://badge.fury.io/py/rethinkmodel)
 [![Build
 Status](https://www.travis-ci.org/metal3d/rethinkmodel.svg?branch=master)](https://www.travis-ci.org/metal3d/rethinkmodel)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=rethinkmodel&metric=alert_status)](https://sonarcloud.io/dashboard?id=rethinkmodel)
