@@ -28,4 +28,4 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         make build
-        twine upload dist/*
+        make deploy
